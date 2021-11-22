@@ -10,9 +10,10 @@ import (
 	upstream_manifest:  string | *""
 	upstream_kustomize: string | *""
 	chart_repo:         string | *""
-	variants:           {...} | *{}
+	variants:           {...} | *{base: values: {}}
 	variants: [string]: values: {...} | *{}
 	repo_name: string
+	namespace: string | *""
 	...
 }
 
@@ -83,8 +84,11 @@ import (
 					"--include-crds",
 					"--kube-version", "1.21",
 					"--version=\(repo.chart_version)",
-					"--namespace=\(repo.namespace)",
-					"--values=\(upstreamHelmValues.filename)"]
+					"--values=\(upstreamHelmValues.filename)",
+					if repo.namespace != "" {
+						"--namespace=\(repo.namespace)"
+					},
+				]
 				stdout: string
 				$after: [upstreamHelmUpdate, upstreamHelmValues]
 			}
