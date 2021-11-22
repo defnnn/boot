@@ -26,7 +26,27 @@ command: {
 					$after: boot["upstream-write"]
 				}
 				"base-write": file.Create & {
-					filename: "../\(rname)/main.yaml"
+					filename: "../\(rname)/base.yaml"
+					contents: boot["base-kustomize"].stdout
+				}
+			}
+
+			if r.upstream_kustomize != "" {
+				"upstream-kustomize": exec.Run & {
+					cmd: ["kustomize", "build", r.upstream_kustomize]
+					stdout: string
+				}
+				"upstream-write-": file.Create & {
+					filename: "../\(rname)/upstream/main.yaml"
+					contents: boot["upstream-kustomize"].stdout
+				}
+				"base-kustomize": exec.Run & {
+					cmd: ["kustomize", "build", "../\(rname)/base"]
+					stdout: string
+					$after: boot["upstream-write"]
+				}
+				"base-write": file.Create & {
+					filename: "../\(rname)/base.yaml"
 					contents: boot["base-kustomize"].stdout
 				}
 			}

@@ -116,9 +116,34 @@ repos: {
 			}
 		}
 	}
+	"katt-metacontroller": {
+		version:            "2.0.12"
+		upstream_kustomize: "https://github.com/metacontroller/metacontroller/manifests/production?ref=v\(version)"
+	}
+	"katt-pihole": {
+		chart_repo:    "https://mojo2600.github.io/pihole-kubernetes"
+		chart_name:    "pihole"
+		chart_version: "2.4.2"
+		install:       "pihole"
+		namespace:     "pihole"
+		variants: {
+			base: {
+				values: {
+					serviceDhcp: enabled: false
+					DNS1: "127.0.0.1#5353"
+					DNS2: "127.0.0.1#5353"
+					adlists: [
+						"https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts",
+						"https://raw.githubusercontent.com/mhhakim/pihole-blocklist/master/porn.txt",
+					]
+				}
+			}
+		}
+	}
 }
 
-repos: [string]: upstream_manifest: string | *""
-repos: [string]: chart_repo:        string | *""
-repos: [string]: variants:          {...} | *{}
+repos: [string]: upstream_manifest:  string | *""
+repos: [string]: upstream_kustomize: string | *""
+repos: [string]: chart_repo:         string | *""
+repos: [string]: variants:           {...} | *{}
 repos: [string]: variants: [string]: valus: {...} | *{}
