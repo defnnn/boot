@@ -9,55 +9,53 @@ import (
 command: {
 	for rname, r in repos {
 		"boot-\(rname)": {
-			let boot = command["boot-\(rname)"]
-
 			if r.upstream_manifest != "" {
-				"upstream-manifest": exec.Run & {
+				upstreamManifest="upstream-manifest": exec.Run & {
 					cmd: ["curl", "-sSL", r.upstream_manifest]
 					stdout: string
 				}
-				"upstream-write-": file.Create & {
+				upstreamWrite="upstream-write-": file.Create & {
 					filename: "../\(rname)/upstream/main.yaml"
-					contents: boot["upstream-manifest"].stdout
+					contents: upstreamManifest.stdout
 				}
-				"base-kustomize": exec.Run & {
+				baseKustomize="base-kustomize": exec.Run & {
 					cmd: ["kustomize", "build", "../\(rname)/base"]
 					stdout: string
-					$after: boot["upstream-write"]
+					$after: upstreamWrite
 				}
 				"base-write": file.Create & {
 					filename: "../\(rname)/base.yaml"
-					contents: boot["base-kustomize"].stdout
+					contents: baseKustomize
 				}
 			}
 
 			if r.upstream_kustomize != "" {
-				"upstream-kustomize": exec.Run & {
+				upstreamKustomize="upstream-kustomize": exec.Run & {
 					cmd: ["kustomize", "build", r.upstream_kustomize]
 					stdout: string
 				}
-				"upstream-write-": file.Create & {
+				upstreamWrite="upstream-write-": file.Create & {
 					filename: "../\(rname)/upstream/main.yaml"
-					contents: boot["upstream-kustomize"].stdout
+					contents: upstreamKustomize.stdout
 				}
-				"base-kustomize": exec.Run & {
+				baseKustomize="base-kustomize": exec.Run & {
 					cmd: ["kustomize", "build", "../\(rname)/base"]
 					stdout: string
-					$after: boot["upstream-write"]
+					$after: upstreamWrite
 				}
 				"base-write": file.Create & {
 					filename: "../\(rname)/base.yaml"
-					contents: boot["base-kustomize"].stdout
+					contents: baseKustomize.stdout
 				}
 			}
 
 			if r.chart_repo != "" {
-				"upstream-helm-add": exec.Run & {
+				upstreamHelmAdd="upstream-helm-add": exec.Run & {
 					cmd: ["helm", "repo", "add", rname, r.chart_repo]
 				}
-				"upstream-helm-update": exec.Run & {
+				upsteamHelmUpdate="upstream-helm-update": exec.Run & {
 					cmd: ["helm", "repo", "update"]
-					$after: boot["upstream-helm-add"]
+					$after: upstreamHelmAdd
 				}
 
 				for vname, v in r.variants {
@@ -66,33 +64,33 @@ command: {
 						"upstream",
 					][0]
 
-					"upstream-helm-values-\(vname)": file.Create & {
+					upstreamHelmValues="upstream-helm-values-\(vname)": file.Create & {
 						filename: "../\(rname)/\(upstream)/values.yaml"
 						contents: yaml.Marshal(v.values)
 					}
-					"upstream-manifest-\(vname)": exec.Run & {
+					upstreamManifest="upstream-manifest-\(vname)": exec.Run & {
 						cmd: ["helm", "template", r.install, "\(rname)/\(r.chart_name)",
 							"--include-crds",
 							"--kube-version", "1.21",
 							"--version=\(r.chart_version)",
 							"--namespace=\(r.namespace)",
-							"--values=\(boot["upstream-helm-values-\(vname)"].filename)"]
+							"--values=\(upstreamHelmValues.filename)"]
 						stdout: string
-						$after: [boot["upstream-helm-update"], boot["upstream-helm-values-\(vname)"]]
+						$after: [upstreamHelmUpdate, upstreamHelmValues]
 					}
 
-					"upstream-write-\(vname)": file.Create & {
+					upstreamWrite="upstream-write-\(vname)": file.Create & {
 						filename: "../\(rname)/\(upstream)/main.yaml"
-						contents: boot["upstream-manifest-\(vname)"].stdout
+						contents: upstreamManifest.stdout
 					}
-					"variant-kustomize-\(vname)": exec.Run & {
+					variantKustomize="variant-kustomize-\(vname)": exec.Run & {
 						cmd: ["kustomize", "build", "../\(rname)/\(vname)"]
 						stdout: string
-						$after: boot["upstream-write-\(vname)"]
+						$after: upstreamWrite
 					}
 					"variant-write-\(vname)": file.Create & {
 						filename: "../\(rname)/\(vname).yaml"
-						contents: boot["variant-kustomize-\(vname)"].stdout
+						contents: variantKustomize.stdout
 					}
 				}
 			}
