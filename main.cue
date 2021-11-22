@@ -12,11 +12,11 @@ import (
 	chart_repo:         string | *""
 	variants:           {...} | *{}
 	variants: [string]: values: {...} | *{}
+	repo_name: string
 	...
 }
 
 #Command: {
-	rname: string
 	r: #Repo
 
 	if r.upstream_manifest != "" {
@@ -61,7 +61,7 @@ import (
 
 	if r.chart_repo != "" {
 		upstreamHelmAdd="upstream-helm-add": exec.Run & {
-			cmd: ["helm", "repo", "add", rname, r.chart_repo]
+			cmd: ["helm", "repo", "add", r.repo_name, r.chart_repo]
 		}
 		upstreamHelmUpdate="upstream-helm-update": exec.Run & {
 			cmd: ["helm", "repo", "update"]
@@ -79,7 +79,7 @@ import (
 				contents: yaml.Marshal(v.values)
 			}
 			upstreamManifest="upstream-manifest-\(vname)": exec.Run & {
-				cmd: ["helm", "template", r.install, "\(rname)/\(r.chart_name)",
+				cmd: ["helm", "template", r.install, "\(r.repo_name)/\(r.chart_name)",
 					"--include-crds",
 					"--kube-version", "1.21",
 					"--version=\(r.chart_version)",
