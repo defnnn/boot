@@ -32,6 +32,8 @@ command: {
 				}
 				"upstream-manifest": exec.Run & {
 					cmd: ["helm", "template", r.install, "\(rname)/\(r.chart_name)",
+						"--include-crds",
+						"--kube-version", "1.21",
 						"--version=\(r.chart_version)",
 						"--namespace=\(r.namespace)",
 						"--values=\(boot["upstream-helm-values"].filename)"]
