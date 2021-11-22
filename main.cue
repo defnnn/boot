@@ -24,51 +24,47 @@ repos: {
 		install:       "traefik"
 		namespace:     "traefik"
 		variants: {
-			base: {
-				values: {
-					additionalArguments: [
-						"--entrypoints.websecure.http.middlewares=traefik-traefik-forward-auth",
-						"--providers.kubernetescrd.allowexternalnameservices=true",
-						"--providers.kubernetescrd.allowCrossNamespace=false",
-						"--log.level=DEBUG",
-						"--accesslog=true",
-						"--serverstransport.insecureskipverify=true",
-						"--global.sendanonymoususage=false",
-						"--certificatesresolvers.letsencrypt.acme.email=iam@defn.sh",
-						"--certificatesresolvers.letsencrypt.acme.storage=/data/acme/acme.json",
-						"--certificatesresolvers.letsencrypt.acme.caserver=https://acme-v02.api.letsencrypt.org/directory",
-						"--certificatesResolvers.letsencrypt.acme.dnschallenge=true",
-						"--certificatesResolvers.letsencrypt.acme.dnschallenge.provider=cloudflare",
-						"--certificatesresolvers.letsencrypt.acme.dnschallenge.resolvers=108.162.193.160:53",
-					]
-					ports: web: redirectTo:           "websecure"
-					ingressRoute: dashboard: enabled: false
-					env: [{
-						name: "CF_DNS_API_TOKEN"
-						valueFrom: secretKeyRef: {
-							name: "cloudflare"
-							key:  "dns-token"
-						}
-					}]
-				}
-			}
-			relay: {
-				values: {
-					additionalArguments: [
-						"--providers.kubernetescrd.allowexternalnameservices=true",
-						"--providers.kubernetescrd.allowCrossNamespace=false",
-						"--log.level=DEBUG",
-						"--accesslog=true",
-						"--serverstransport.insecureskipverify=true",
-						"--global.sendanonymoususage=false",
-					]
-
-					ingressRoute: dashboard: enabled: false
-
-					ports: {
-						traefik: port:     9200
-						websecure: expose: false
+			base: values: {
+				additionalArguments: [
+					"--entrypoints.websecure.http.middlewares=traefik-traefik-forward-auth",
+					"--providers.kubernetescrd.allowexternalnameservices=true",
+					"--providers.kubernetescrd.allowCrossNamespace=false",
+					"--log.level=DEBUG",
+					"--accesslog=true",
+					"--serverstransport.insecureskipverify=true",
+					"--global.sendanonymoususage=false",
+					"--certificatesresolvers.letsencrypt.acme.email=iam@defn.sh",
+					"--certificatesresolvers.letsencrypt.acme.storage=/data/acme/acme.json",
+					"--certificatesresolvers.letsencrypt.acme.caserver=https://acme-v02.api.letsencrypt.org/directory",
+					"--certificatesResolvers.letsencrypt.acme.dnschallenge=true",
+					"--certificatesResolvers.letsencrypt.acme.dnschallenge.provider=cloudflare",
+					"--certificatesresolvers.letsencrypt.acme.dnschallenge.resolvers=108.162.193.160:53",
+				]
+				ports: web: redirectTo:           "websecure"
+				ingressRoute: dashboard: enabled: false
+				env: [{
+					name: "CF_DNS_API_TOKEN"
+					valueFrom: secretKeyRef: {
+						name: "cloudflare"
+						key:  "dns-token"
 					}
+				}]
+			}
+			relay: values: {
+				additionalArguments: [
+					"--providers.kubernetescrd.allowexternalnameservices=true",
+					"--providers.kubernetescrd.allowCrossNamespace=false",
+					"--log.level=DEBUG",
+					"--accesslog=true",
+					"--serverstransport.insecureskipverify=true",
+					"--global.sendanonymoususage=false",
+				]
+
+				ingressRoute: dashboard: enabled: false
+
+				ports: {
+					traefik: port:     9200
+					websecure: expose: false
 				}
 			}
 		}
