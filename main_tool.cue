@@ -14,7 +14,7 @@ command: {
 					cmd: ["curl", "-sSL", r.upstream_manifest]
 					stdout: string
 				}
-				upstreamWrite="upstream-write-": file.Create & {
+				upstreamWrite="upstream-write": file.Create & {
 					filename: "../\(rname)/upstream/main.yaml"
 					contents: upstreamManifest.stdout
 				}
@@ -34,7 +34,7 @@ command: {
 					cmd: ["kustomize", "build", r.upstream_kustomize]
 					stdout: string
 				}
-				upstreamWrite="upstream-write-": file.Create & {
+				upstreamWrite="upstream-write": file.Create & {
 					filename: "../\(rname)/upstream/main.yaml"
 					contents: upstreamKustomize.stdout
 				}
