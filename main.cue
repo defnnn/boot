@@ -9,6 +9,13 @@ repos: {
 		version:           "3.2.4"
 		upstream_manifest: "https://raw.githubusercontent.com/argoproj/argo-workflows/v\(version)/manifests/quick-start-postgres.yaml"
 	}
+	"katt-traefik-forward-auth": {
+		chart_repo:    "https://k8s-at-home.com/charts"
+		chart_name:    "traefik-forward-auth"
+		chart_version: "1.0.10"
+		install:       "traefik-forward-auth"
+		namespace:     "traefik"
+	}
 	"katt-cilium": {
 		chart_repo:    "https://helm.cilium.io"
 		chart_name:    "cilium"
@@ -29,3 +36,4 @@ repos: {
 
 repos: [string]: upstream_manifest: string | *""
 repos: [string]: chart_repo:        string | *""
+repos: [string]: values:            {...} | *{}
