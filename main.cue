@@ -40,7 +40,10 @@ repos: {
 					"--certificatesResolvers.letsencrypt.acme.dnschallenge.provider=cloudflare",
 					"--certificatesresolvers.letsencrypt.acme.dnschallenge.resolvers=108.162.193.160:53",
 				]
-				ports: web: redirectTo:           "websecure"
+				ports: {
+					traefik: port:   9200
+					web: redirectTo: "websecure"
+				}
 				ingressRoute: dashboard: enabled: false
 				env: [{
 					name: "CF_DNS_API_TOKEN"
