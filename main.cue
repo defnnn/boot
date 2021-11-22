@@ -17,11 +17,11 @@ import (
 }
 
 #Command: {
-	r: #Repo
+	repo: #Repo
 
-	if r.upstream_manifest != "" {
+	if repo.upstream_manifest != "" {
 		upstreamManifest="upstream-manifest": exec.Run & {
-			cmd: ["curl", "-sSL", r.upstream_manifest]
+			cmd: ["curl", "-sSL", repo.upstream_manifest]
 			stdout: string
 		}
 		upstreamWrite="upstream-write": file.Create & {
@@ -39,9 +39,9 @@ import (
 		}
 	}
 
-	if r.upstream_kustomize != "" {
+	if repo.upstream_kustomize != "" {
 		upstreamKustomize="upstream-kustomize": exec.Run & {
-			cmd: ["kustomize", "build", r.upstream_kustomize]
+			cmd: ["kustomize", "build", repo.upstream_kustomize]
 			stdout: string
 		}
 		upstreamWrite="upstream-write": file.Create & {
@@ -59,16 +59,16 @@ import (
 		}
 	}
 
-	if r.chart_repo != "" {
+	if repo.chart_repo != "" {
 		upstreamHelmAdd="upstream-helm-add": exec.Run & {
-			cmd: ["helm", "repo", "add", r.repo_name, r.chart_repo]
+			cmd: ["helm", "repo", "add", repo.repo_name, repo.chart_repo]
 		}
 		upstreamHelmUpdate="upstream-helm-update": exec.Run & {
 			cmd: ["helm", "repo", "update"]
 			$after: upstreamHelmAdd
 		}
 
-		for vname, v in r.variants {
+		for vname, v in repo.variants {
 			let upstream = [
 				if vname != "base" {"upstream-\(vname)"},
 				"upstream",
@@ -79,11 +79,11 @@ import (
 				contents: yaml.Marshal(v.values)
 			}
 			upstreamManifest="upstream-manifest-\(vname)": exec.Run & {
-				cmd: ["helm", "template", r.install, "\(r.repo_name)/\(r.chart_name)",
+				cmd: ["helm", "template", repo.install, "\(repo.repo_name)/\(repo.chart_name)",
 					"--include-crds",
 					"--kube-version", "1.21",
-					"--version=\(r.chart_version)",
-					"--namespace=\(r.namespace)",
+					"--version=\(repo.chart_version)",
+					"--namespace=\(repo.namespace)",
 					"--values=\(upstreamHelmValues.filename)"]
 				stdout: string
 				$after: [upstreamHelmUpdate, upstreamHelmValues]
