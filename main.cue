@@ -83,20 +83,16 @@ repos: {
 		install:       "kuma"
 		namespace:     "kuma-system"
 		variants: {
-			global: {
-				values: {
-					controlPlane: mode: "global"
-				}
+			global: values: {
+				controlPlane: mode: "global"
 			}
-			zone: {
-				values: {
-					controlPlane: {
-						mode:             "zone"
-						zone:             "TODO"
-						kdsGlobalAddress: "grpcs://100.100.100.100:5685"
-					}
-					ingress: enabled: true
+			zone: values: {
+				controlPlane: {
+					mode:             "zone"
+					zone:             "TODO"
+					kdsGlobalAddress: "grpcs://100.100.100.100:5685"
 				}
+				ingress: enabled: true
 			}
 		}
 	}
@@ -106,18 +102,14 @@ repos: {
 		chart_version: "1.11.0-rc2"
 		install:       "cilium"
 		namespace:     "kube-system"
-		variants: {
-			base: {
-				values: {
-					hubble: {
-						ui: enabled:    true
-						relay: enabled: true
-					}
-					operator: replicas:    1
-					hostServices: enabled: false
-					bpf: masquerade:       false
-				}
+		variants: base: values: {
+			hubble: {
+				ui: enabled:    true
+				relay: enabled: true
 			}
+			operator: replicas:    1
+			hostServices: enabled: false
+			bpf: masquerade:       false
 		}
 	}
 	"katt-metacontroller": {
@@ -130,8 +122,8 @@ repos: {
 		chart_version: "2.4.2"
 		install:       "pihole"
 		namespace:     "pihole"
-		variants: {
-			base: {
+		variants:
+			base:
 				values: {
 					serviceDhcp: enabled: false
 					DNS1: "127.0.0.1#5353"
@@ -141,8 +133,6 @@ repos: {
 						"https://raw.githubusercontent.com/mhhakim/pihole-blocklist/master/porn.txt",
 					]
 				}
-			}
-		}
 	}
 }
 
