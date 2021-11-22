@@ -17,7 +17,7 @@ import (
 
 #Command: {
 	rname: string
-	r: {...}
+	r: #Repo
 
 	if r.upstream_manifest != "" {
 		upstreamManifest="upstream-manifest": exec.Run & {
