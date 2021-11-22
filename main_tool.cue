@@ -53,7 +53,7 @@ command: {
 				upstreamHelmAdd="upstream-helm-add": exec.Run & {
 					cmd: ["helm", "repo", "add", rname, r.chart_repo]
 				}
-				upsteamHelmUpdate="upstream-helm-update": exec.Run & {
+				upstreamHelmUpdate="upstream-helm-update": exec.Run & {
 					cmd: ["helm", "repo", "update"]
 					$after: upstreamHelmAdd
 				}
