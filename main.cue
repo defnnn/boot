@@ -72,6 +72,30 @@ repos: {
 		install:       "traefik-forward-auth"
 		namespace:     "traefik"
 	}
+	"katt-kuma": {
+		chart_repo:    "https://kumahq.github.io/charts"
+		chart_name:    "kuma"
+		chart_version: "0.7.1"
+		install:       "kuma"
+		namespace:     "kuma-system"
+		variants: {
+			global: {
+				values: {
+					controlPlane: mode: "global"
+				}
+			}
+			zone: {
+				values: {
+					controlPlane: {
+						mode:             "zone"
+						zone:             "TODO"
+						kdsGlobalAddress: "grpcs://100.100.100.100:5685"
+					}
+					ingress: enabled: true
+				}
+			}
+		}
+	}
 	"katt-cilium": {
 		chart_repo:    "https://helm.cilium.io"
 		chart_name:    "cilium"
