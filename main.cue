@@ -129,8 +129,13 @@ repos: {
 	}
 }
 
-repos: [string]: upstream_manifest:  string | *""
-repos: [string]: upstream_kustomize: string | *""
-repos: [string]: chart_repo:         string | *""
-repos: [string]: variants:           {...} | *{}
-repos: [string]: variants: [string]: valus: {...} | *{}
+repos: [string]: #Repo
+
+#Repo: {
+	upstream_manifest:  string | *""
+	upstream_kustomize: string | *""
+	chart_repo:         string | *""
+	variants:           {...} | *{}
+	variants: [string]: values: {...} | *{}
+	...
+}
