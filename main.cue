@@ -9,6 +9,14 @@ repos: {
 		version:           "3.2.4"
 		upstream_manifest: "https://raw.githubusercontent.com/argoproj/argo-workflows/v\(version)/manifests/quick-start-postgres.yaml"
 	}
+	"katt-argo-events": {
+		version:           "1.4.3"
+		upstream_manifest: "https://raw.githubusercontent.com/argoproj/argo-events/v\(version)/manifests/install-validating-webhook.yaml"
+	}
+	"katt-argo-rollouts": {
+		version:           "1.0.7"
+		upstream_manifest: "https://github.com/argoproj/argo-rollouts/releases/download/v\(version)/install.yaml"
+	}
 	"katt-traefik": {
 		chart_repo:    "https://helm.traefik.io/traefik"
 		chart_name:    "traefik"
