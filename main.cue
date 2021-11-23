@@ -31,6 +31,10 @@ import (
 #Plugins: {
 	cfg: {...}
 
+	vendor: exec.Run & {
+		cmd: "hof mod vendor"
+	}
+
 	{
 		for cname, c in cfg {
 			if (c & #Python) != _|_ {
