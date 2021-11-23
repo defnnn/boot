@@ -67,7 +67,6 @@ _python: {
 			profile = "black" 
 			"""
 		gitignore: """
-			cue.mod/pkg/
 			venv
 			"""
 		requirements: """
