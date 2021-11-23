@@ -7,7 +7,13 @@ import (
 	"tool/file"
 )
 
-#Repo: {
+#Plugin: {
+	plugin: string
+	...
+}
+
+#Repo: #Plugin & {
+	plugin:             "repo"
 	upstream_manifest:  string | *""
 	upstream_kustomize: string | *""
 	chart_repo:         string | *""
@@ -15,14 +21,35 @@ import (
 	variants: [string]: values: {...} | *{}
 	repo_name: string
 	namespace: string | *""
-	...
 }
 
-#Python: {
+#Python: #Plugin & {
+	plugin:   "python"
 	language: "python"
 }
 
-python: {
+#PythonVirtualEnv: #Plugin & {
+	plugin: "python-virtualenv"
+	python: #Python
+}
+
+#Plugins: {
+	cfg: {...}
+
+	{
+		for cname, c in cfg {
+			if (c & #Python) != _|_ {
+				py:   #Command & {cfg: c}
+				venv: #Command & {cfg: #PythonVirtualEnv & {python: c}}
+			}
+			if (c & #Repo) != _|_ {
+				gen: #Command & {cfg: c}
+			}
+		}
+	}
+}
+
+_python: {
 	_line_length: 99
 	templates: {
 		flake8:    """
@@ -40,31 +67,37 @@ python: {
 			profile = "black" 
 			"""
 		gitignore: """
-				cue.mod/pkg/
-				venv
-				"""
+			cue.mod/pkg/
+			venv
+			"""
 	}
 }
 
 #Command: {
-	cfg: #Repo | #Python
+	cfg: #Repo | #Python | #PythonVirtualEnv
 
-	if (cfg & #Python) != _|_ {
+	if cfg.plugin == "python" {
 		"python-flake8": file.Create & {
 			filename: ".flake8"
-			contents: template.Execute(python.templates.flake8, {})
+			contents: template.Execute(_python.templates.flake8, {})
 		}
 		"python-pyproject": file.Create & {
 			filename: "pyproject.toml"
-			contents: template.Execute(python.templates.pyproject, {})
+			contents: template.Execute(_python.templates.pyproject, {})
 		}
 		"python-gitignore": file.Create & {
 			filename: ".gitignore"
-			contents: template.Execute(python.templates.gitignore, {})
+			contents: template.Execute(_python.templates.gitignore, {})
 		}
 	}
 
-	if (cfg & #Repo) != _|_ {
+	if cfg.plugin == "python-virtualenv" {
+		"python-virtualenv": exec.Run & {
+			cmd: ["python", "-mvenv", "venv"]
+		}
+	}
+
+	if cfg.plugin == "repo" {
 		if cfg.upstream_manifest != "" {
 			upstreamManifest="upstream-manifest": exec.Run & {
 				cmd: ["curl", "-sSL", cfg.upstream_manifest]

@@ -1,5 +1,5 @@
 package boot
 
-command: gen: #Command & {
-  "cfg": #Python
+command: #Plugins & {
+	"cfg": {python: #Python}
 }
