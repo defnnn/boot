@@ -18,11 +18,11 @@ import (
 }
 
 #Command: {
-	repo: #Repo
+	cfg: #Repo
 
-	if repo.upstream_manifest != "" {
+	if cfg.upstream_manifest != "" {
 		upstreamManifest="upstream-manifest": exec.Run & {
-			cmd: ["curl", "-sSL", repo.upstream_manifest]
+			cmd: ["curl", "-sSL", cfg.upstream_manifest]
 			stdout: string
 		}
 		upstreamWrite="upstream-write": file.Create & {
@@ -40,9 +40,9 @@ import (
 		}
 	}
 
-	if repo.upstream_kustomize != "" {
+	if cfg.upstream_kustomize != "" {
 		upstreamKustomize="upstream-kustomize": exec.Run & {
-			cmd: ["kustomize", "build", repo.upstream_kustomize]
+			cmd: ["kustomize", "build", cfg.upstream_kustomize]
 			stdout: string
 		}
 		upstreamWrite="upstream-write": file.Create & {
@@ -60,16 +60,16 @@ import (
 		}
 	}
 
-	if repo.chart_repo != "" {
+	if cfg.chart_repo != "" {
 		upstreamHelmAdd="upstream-helm-add": exec.Run & {
-			cmd: ["helm", "repo", "add", repo.repo_name, repo.chart_repo]
+			cmd: ["helm", "repo", "add", cfg.repo_name, cfg.chart_repo]
 		}
 		upstreamHelmUpdate="upstream-helm-update": exec.Run & {
 			cmd: ["helm", "repo", "update"]
 			$after: upstreamHelmAdd
 		}
 
-		for vname, v in repo.variants {
+		for vname, v in cfg.variants {
 			let upstream = [
 				if vname != "base" {"upstream-\(vname)"},
 				"upstream",
@@ -80,13 +80,13 @@ import (
 				contents: yaml.Marshal(v.values)
 			}
 			upstreamManifest="upstream-manifest-\(vname)": exec.Run & {
-				cmd: ["helm", "template", repo.install, "\(repo.repo_name)/\(repo.chart_name)",
+				cmd: ["helm", "template", cfg.install, "\(cfg.repo_name)/\(cfg.chart_name)",
 					"--include-crds",
 					"--kube-version", "1.21",
-					"--version=\(repo.chart_version)",
+					"--version=\(cfg.chart_version)",
 					"--values=\(upstreamHelmValues.filename)",
-					if repo.namespace != "" {
-						"--namespace=\(repo.namespace)"
+					if cfg.namespace != "" {
+						"--namespace=\(cfg.namespace)"
 					},
 				]
 				stdout: string
