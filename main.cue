@@ -28,19 +28,13 @@ import (
 	language: "python"
 }
 
-#PythonVirtualEnv: #Plugin & {
-	plugin: "python-virtualenv"
-	python: #Python
-}
-
 #Plugins: {
 	cfg: {...}
 
 	{
 		for cname, c in cfg {
 			if (c & #Python) != _|_ {
-				py:   #Command & {cfg: c}
-				venv: #Command & {cfg: #PythonVirtualEnv & {python: c}}
+				py: #Command & {cfg: c}
 			}
 			if (c & #Repo) != _|_ {
 				gen: #Command & {cfg: c}
@@ -70,11 +64,16 @@ _python: {
 			cue.mod/pkg/
 			venv
 			"""
+		requirements: """
+			black
+			isort
+			flake8
+			"""
 	}
 }
 
 #Command: {
-	cfg: #Repo | #Python | #PythonVirtualEnv
+	cfg: #Repo | #Python
 
 	if cfg.plugin == "python" {
 		"python-flake8": file.Create & {
@@ -89,11 +88,24 @@ _python: {
 			filename: ".gitignore"
 			contents: template.Execute(_python.templates.gitignore, {})
 		}
-	}
-
-	if cfg.plugin == "python-virtualenv" {
-		"python-virtualenv": exec.Run & {
+		pythonRequirementsSite="python-requirements-site": file.Read & {
+			filename: "requirements.txt.site"
+			contents: string
+		}
+		pythonRequirements="python-requirements": file.Create & {
+			filename: "requirements.txt"
+			contents: template.Execute(_python.templates.requirements, {}) + "\n" + pythonRequirementsSite.contents
+		}
+		pythonVirtualEnv="python-virtualenv": exec.Run & {
 			cmd: ["python", "-mvenv", "venv"]
+		}
+		pythonPipUpgrade="python-pip-upgrade": exec.Run & {
+			cmd: ["venv/bin/pip", "install", "--upgrade", "pip"]
+			$after: pythonVirtualEnv
+		}
+		"python-pip-requirements": exec.Run & {
+			cmd: ["venv/bin/pip", "install", "-r", "requirements.txt"]
+			$after: [pythonPipUpgrade, pythonRequirements]
 		}
 	}
 
