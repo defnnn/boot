@@ -47,6 +47,9 @@ import (
 			if (c & #Repo) != _|_ {
 				gen: #Command & {cfg: c}
 			}
+			if (c & #Cue) != _|_ {
+				boot: #Command & {cfg: c}
+			}
 		}
 	}
 
