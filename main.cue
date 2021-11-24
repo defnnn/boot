@@ -84,7 +84,7 @@ _python: {
 	}
 }
 
-_version: string @tag(version)
+_version: *"TODO" | string @tag(version)
 
 _boot: {
 	module: string
@@ -98,7 +98,7 @@ _boot: {
 			cue v0.4.0
 
 			require (
-				github.com/defn/boot \(version)
+				github.com/defn/boot \(_version)
 			)
 			"""
 		bootTools: """
@@ -157,30 +157,30 @@ _boot: {
 		}
 	}
 
-	if cfg.plugin == "cue" {
-		cueGitIgnoreSite="cue-gitignore-site": file.Read & {
+	if cfg.plugin == "boot" {
+		bootGitIgnoreSite="boot-gitignore-site": file.Read & {
 			filename: ".gitignore-site"
 			contents: string
 		}
-		cueGitIgnore="cue-gitignore": file.Create & {
+		"boot-gitignore": file.Create & {
 			filename: ".gitignore"
-			contents: template.Execute(_cue.templates.gitignore, {}) + "\n" + cueGitIgnoreSite.contents
+			contents: template.Execute(_boot.templates.gitignore, {}) + "\n" + bootGitIgnoreSite.contents
 		}
-		cueMod="cue-mod": file.Create & {
+		"boot-mod": file.Create & {
 			filename: "cue-mod/module.cue"
-			contents: template.Execute(_cue.templates.cueMod, {})
+			contents: template.Execute(_boot.templates.cueMod, {})
 		}
-		cueMods="cue-mods": file.Create & {
+		bootMods="boot-mods": file.Create & {
 			filename: "cue-mods"
-			contents: template.Execute(_cue.templates.cueMods, {})
+			contents: template.Execute(_boot.templates.cueMods, {})
 		}
-		cueBootTools="cue-boot-tools": file.Create & {
+		"boot-tools": file.Create & {
 			filename: "boot_tools.cue"
-			contents: template.Execute(_cue.templates.bootTools, {})
+			contents: template.Execute(_boot.templates.bootTools, {})
 		}
-		"cue-vendor": exec.Run & {
-			cmd: ["cue", "vendor"]
-			$after: cueMods
+		"boot-vendor": exec.Run & {
+			cmd: ["hof", "mod", "vendor"]
+			$after: bootMods
 		}
 	}
 
