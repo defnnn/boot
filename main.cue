@@ -108,6 +108,7 @@ _boot: CFG=#Boot & {
 
 			cfg: "boot": boot.#Boot & {
 				module: "\(CFG.module)"
+				version: _boot: version
 			}
 			"""
 		bootTool: """
