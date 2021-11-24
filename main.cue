@@ -176,7 +176,7 @@ _boot: {
 			contents: template.Execute(_cue.templates.bootTools, {})
 		}
 		"cue-vendor": exec.Run & {
-			cmd: ["hof", "mod", "vendor"]
+			cmd: ["cue", "vendor"]
 			$after: cueMods
 		}
 	}
