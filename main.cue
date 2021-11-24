@@ -28,6 +28,10 @@ import (
 	language: "python"
 }
 
+#Cue: #Plugin & {
+	plugin: "cue"
+}
+
 #Plugins: {
 	cfg: {...}
 
@@ -77,6 +81,42 @@ _python: {
 	}
 }
 
+_version: string @tag(version)
+
+_boot: {
+	module: string
+	templates: {
+		cueMod:  """
+			module: \(module)
+			"""
+		cueMods: """
+			module \(module)
+
+			cue v0.4.0
+
+			require (
+				github.com/defn/boot \(version)
+			)
+			"""
+		bootTools: """
+			package boot
+
+			import (
+				"github.com/defn/boot"
+			)
+
+			cfg: {...} | *{}
+
+			command: boot.#Plugins & {
+				"cfg": cfg
+			}
+			"""
+		gitignore: """
+			cue.mod/pkg/
+			"""
+	}
+}
+
 #Command: {
 	cfg: #Repo | #Python
 
@@ -111,6 +151,33 @@ _python: {
 		"python-pip-requirements": exec.Run & {
 			cmd: ["venv/bin/pip", "install", "-r", "requirements.txt"]
 			$after: [pythonPipUpgrade, pythonRequirements]
+		}
+	}
+
+	if cfg.plugin == "cue" {
+		cueGitIgnoreSite="cue-gitignore-site": file.Read & {
+			filename: ".gitignore-site"
+			contents: string
+		}
+		cueGitIgnore="cue-gitignore": file.Create & {
+			filename: ".gitignore"
+			contents: template.Execute(_cue.templates.gitignore, {}) + "\n" + cueGitIgnoreSite.contents
+		}
+		cueMod="cue-mod": file.Create & {
+			filename: "cue-mod/module.cue"
+			contents: template.Execute(_cue.templates.cueMod, {})
+		}
+		cueMods="cue-mods": file.Create & {
+			filename: "cue-mods"
+			contents: template.Execute(_cue.templates.cueMods, {})
+		}
+		cueBootTools="cue-boot-tools": file.Create & {
+			filename: "boot_tools.cue"
+			contents: template.Execute(_cue.templates.bootTools, {})
+		}
+		"cue-vendor": exec.Run & {
+			cmd: ["hof", "mod", "vendor"]
+			$after: cueMods
 		}
 	}
 
