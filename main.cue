@@ -110,10 +110,7 @@ _boot: CFG=#Boot & {
 
 			import "github.com/defn/boot"
 
-			cfg: "boot": boot.#Boot & {
-				module: "\(CFG.module)"
-				version: _boot.version
-			}
+			cfg: "boot": boot.#Boot
 			"""
 		bootTool: """
 			package boot
