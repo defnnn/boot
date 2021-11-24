@@ -89,15 +89,16 @@ _version: *"TODO" | string @tag(version)
 _boot: {
 	module: string
 	templates: {
-		cueMod:  """
+		cueMod:   """
 			module: \(module)
 			"""
-		cueMods: """
+		_require: "require"
+		cueMods:  """
 			module \(module)
 
 			cue v0.4.0
 
-			require (
+			\(_require) (
 				github.com/defn/boot \(_version)
 			)
 			"""
