@@ -28,8 +28,8 @@ import (
 	language: "python"
 }
 
-#Cue: #Plugin & {
-	plugin: "cue"
+#Boot: #Plugin & {
+	plugin: "boot"
 }
 
 #Plugins: {
