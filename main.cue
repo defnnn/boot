@@ -43,7 +43,7 @@ import (
 	}
 
 	hello: exec.Run & {
-		cmd: "echo hello"
+		cmd: "echo hello v29"
 	}
 
 	{
