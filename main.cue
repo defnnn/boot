@@ -47,7 +47,7 @@ import (
 			if (c & #Repo) != _|_ {
 				gen: #Command & {cfg: c}
 			}
-			if (c & #Cue) != _|_ {
+			if (c & #Boot) != _|_ {
 				boot: #Command & {cfg: c}
 			}
 		}
@@ -89,20 +89,28 @@ _version: *"TODO" | string @tag(version)
 _boot: {
 	module: string
 	templates: {
-		cueMod:   """
+		cueMod:  """
 			module: \(module)
 			"""
-		_require: "require"
-		cueMods:  """
+		cueMods: """
 			module \(module)
 
 			cue v0.4.0
 
-			\(_require) (
+			require ()
 				github.com/defn/boot \(_version)
 			)
 			"""
-		bootTools: """
+		bootCue: """
+			package boot
+
+			import "github.com/defn/boot"
+
+			cfg: "boot": boot.#Boot & {
+				module: "\(module)""
+			}
+			"""
+		bootTool: """
 			package boot
 
 			import (
@@ -122,7 +130,7 @@ _boot: {
 }
 
 #Command: {
-	cfg: #Repo | #Python
+	cfg: #Repo | #Python | #Boot
 
 	if cfg.plugin == "python" {
 		"python-flake8": file.Create & {
@@ -175,9 +183,13 @@ _boot: {
 			filename: "cue-mods"
 			contents: template.Execute(_boot.templates.cueMods, {})
 		}
-		"boot-tools": file.Create & {
-			filename: "boot_tools.cue"
-			contents: template.Execute(_boot.templates.bootTools, {})
+		"boot-cue": file.Create & {
+			filename: "boot.cue"
+			contents: template.Execute(_boot.templates.bootCue, {})
+		}
+		"boot-tool": file.Create & {
+			filename: "boot_tool.cue"
+			contents: template.Execute(_boot.templates.bootTool, {})
 		}
 		"boot-vendor": exec.Run & {
 			cmd: ["hof", "mod", "vendor"]
