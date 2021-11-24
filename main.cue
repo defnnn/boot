@@ -39,7 +39,7 @@ import (
 	cfg: {...}
 
 	vendor: exec.Run & {
-		cmd: "hof mod vendor"
+		cmd: "hof mod vendor cue"
 	}
 
 	hello: exec.Run & {
@@ -195,7 +195,7 @@ _boot: CFG=#Boot & {
 			contents: template.Execute(tmpl.templates.bootTool, {})
 		}
 		"boot-vendor": exec.Run & {
-			cmd: ["hof", "mod", "vendor"]
+			cmd: ["hof", "mod", "vendor", "cue"]
 			$after: bootMods
 		}
 	}
