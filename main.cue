@@ -111,6 +111,7 @@ _boot: CFG=#Boot & {
 			import "github.com/defn/boot"
 
 			cfg: "boot": boot.#Boot
+
 			"""
 		bootTool: """
 			package boot
@@ -124,6 +125,7 @@ _boot: CFG=#Boot & {
 			command: boot.#Plugins & {
 				"cfg": cfg
 			}
+
 			"""
 		gitignore: """
 			cue.mod/pkg/
