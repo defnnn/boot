@@ -29,7 +29,10 @@ import (
 }
 
 #Boot: #Plugin & {
-	plugin: "boot"
+	plugin:  "boot"
+	module:  string
+	version: string
+	templates: {...}
 }
 
 #Plugins: {
@@ -84,21 +87,18 @@ _python: {
 	}
 }
 
-_version: *"TODO" | string @tag(version)
-
-_boot: {
-	module: string
+_boot: CFG=#Boot & {
 	templates: {
 		cueMod:  """
-			module: \(module)
+			module: "\(CFG.module)"
 			"""
 		cueMods: """
-			module \(module)
+			module \(CFG.module)
 
 			cue v0.4.0
 
-			require ()
-				github.com/defn/boot \(_version)
+			require (
+				github.com/defn/boot \(CFG.version)
 			)
 			"""
 		bootCue: """
@@ -107,7 +107,7 @@ _boot: {
 			import "github.com/defn/boot"
 
 			cfg: "boot": boot.#Boot & {
-				module: "\(module)""
+				module: "\(CFG.module)"
 			}
 			"""
 		bootTool: """
@@ -167,29 +167,30 @@ _boot: {
 	}
 
 	if cfg.plugin == "boot" {
+		let tmpl = _boot & cfg
 		bootGitIgnoreSite="boot-gitignore-site": file.Read & {
 			filename: ".gitignore-site"
 			contents: string
 		}
 		"boot-gitignore": file.Create & {
 			filename: ".gitignore"
-			contents: template.Execute(_boot.templates.gitignore, {}) + "\n" + bootGitIgnoreSite.contents
+			contents: template.Execute(tmpl.templates.gitignore, {}) + "\n" + bootGitIgnoreSite.contents
 		}
 		"boot-mod": file.Create & {
-			filename: "cue-mod/module.cue"
-			contents: template.Execute(_boot.templates.cueMod, {})
+			filename: "cue.mod/module.cue"
+			contents: template.Execute(tmpl.templates.cueMod, {})
 		}
 		bootMods="boot-mods": file.Create & {
-			filename: "cue-mods"
-			contents: template.Execute(_boot.templates.cueMods, {})
+			filename: "cue.mods"
+			contents: template.Execute(tmpl.templates.cueMods, {})
 		}
 		"boot-cue": file.Create & {
 			filename: "boot.cue"
-			contents: template.Execute(_boot.templates.bootCue, {})
+			contents: template.Execute(tmpl.templates.bootCue, {})
 		}
 		"boot-tool": file.Create & {
 			filename: "boot_tool.cue"
-			contents: template.Execute(_boot.templates.bootTool, {})
+			contents: template.Execute(tmpl.templates.bootTool, {})
 		}
 		"boot-vendor": exec.Run & {
 			cmd: ["hof", "mod", "vendor"]
