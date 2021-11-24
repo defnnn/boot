@@ -170,17 +170,25 @@ _boot: CFG=#Boot & {
 
 	if cfg.plugin == "boot" {
 		let tmpl = _boot & cfg
+		bootTouchGitIgnoreSite="boot-touch-gitignore-site": exec.Run & {
+			cmd: ["touch", ".gitignore-site"]
+		}
 		bootGitIgnoreSite="boot-gitignore-site": file.Read & {
 			filename: ".gitignore-site"
 			contents: string
+			$after:   bootTouchGitIgnoreSite
 		}
 		"boot-gitignore": file.Create & {
 			filename: ".gitignore"
 			contents: template.Execute(tmpl.templates.gitignore, {}) + "\n" + bootGitIgnoreSite.contents
 		}
+		bootMkdirCueMod="boot-mkdir-cue-mod": exec.Run & {
+			cmd: ["mkdir", "-p", "cue.mod"]
+		}
 		"boot-mod": file.Create & {
 			filename: "cue.mod/module.cue"
 			contents: template.Execute(tmpl.templates.cueMod, {})
+			$after:   bootMkdirCueMod
 		}
 		bootMods="boot-mods": file.Create & {
 			filename: "cue.mods"
