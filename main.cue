@@ -42,6 +42,10 @@ import (
 		cmd: "hof mod vendor"
 	}
 
+	hello: exec.Run & {
+		cmd: "echo hello"
+	}
+
 	{
 		for cname, c in cfg {
 			if (c & #Python) != _|_ {
