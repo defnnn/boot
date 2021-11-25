@@ -60,11 +60,6 @@ import (
 		cmd: "echo hello v29"
 	}
 
-	k3: file.Create & {
-		filename: "cool.txt"
-		contents: yaml.Marshal(cfg.kustomize.clusters.imac[0].output)
-	}
-
 	{
 		for cname, c in cfg {
 			if (c & #Python) != _|_ {
