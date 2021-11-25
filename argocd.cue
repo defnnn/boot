@@ -1,6 +1,8 @@
 package boot
 
-import "strings"
+import (
+	"strings"
+)
 
 #ArgoProject: [CLUSTER=string]: {
 	apiVersion: "argoproj.io/v1alpha1"
