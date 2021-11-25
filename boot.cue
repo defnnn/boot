@@ -32,6 +32,21 @@ import (
 	templates: {...}
 }
 
+#ArgoCD: #Plugin & {
+	plugin: "argocd"
+	projects: [...#ArgoProject]
+	clusters: {
+		[string]: [string]: [...#ArgoApplication]
+	}
+}
+
+#Kustomize: #Plugin & {
+	plugin: "kustomize"
+	clusters: {
+		[string]: [string]: [...#DeployBase]
+	}
+}
+
 #Plugins: {
 	cfg: {...}
 
@@ -48,11 +63,21 @@ import (
 			if (c & #Python) != _|_ {
 				py: #Command & {cfg: c}
 			}
+
 			if (c & #Repo) != _|_ {
 				gen: #Command & {cfg: c}
 			}
+
 			if (c & #Boot) != _|_ {
 				boot: #Command & {cfg: c}
+			}
+
+			if (c & #ArgoCD) != _|_ {
+				argocd: #Command & {cfg: c}
+			}
+
+			if (c & #Kustomize) != _|_ {
+				kustomize: #Command & {cfg: c}
 			}
 		}
 	}
