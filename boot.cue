@@ -2,6 +2,8 @@ package boot
 
 import (
 	"tool/exec"
+	"tool/file"
+	"encoding/yaml"
 )
 
 #Plugin: {
@@ -36,14 +38,14 @@ import (
 	plugin: "argocd"
 	projects: [...#ArgoProject]
 	clusters: {
-		[string]: [string]: [...#ArgoApplication]
+		[string]: [...#ArgoApplication]
 	}
 }
 
 #Kustomize: #Plugin & {
 	plugin: "kustomize"
 	clusters: {
-		[string]: [string]: [...#DeployBase]
+		[string]: [...#DeployBase]
 	}
 }
 
@@ -56,6 +58,11 @@ import (
 
 	hello: exec.Run & {
 		cmd: "echo hello v29"
+	}
+
+	k3: file.Create & {
+		filename: "cool.txt"
+		contents: yaml.Marshal(cfg.kustomize.clusters.imac[0].output)
 	}
 
 	{

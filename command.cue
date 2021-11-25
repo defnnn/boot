@@ -9,7 +9,7 @@ import (
 )
 
 #Command: {
-	cfg: #Repo | #Python | #Boot | #ArgoCD | #Kustomize
+	cfg: #Repo | #Python | #Boot | #Kustomize | #ArgoCD
 
 	if cfg.plugin == "argocd" {
 		"argocd-project": file.Create & {
@@ -19,28 +19,32 @@ import (
 		for cname, apps in cfg.clusters {
 			"argocd-cluster-\(cname)": file.Create & {
 				filename: "a/cluster-\(cname).yaml"
-				contents: yaml.MarshalStream(apps)
+				contents: yaml.Marshal(apps)
 			}
 		}
 	}
 
 	if cfg.plugin == "kustomize" {
-		for cname, apps in cfg.clusters for aname, a in apps {
-			"kustomization-\(cname)-\(aname)": file.Create & {
-				filename: strings.ToLower("c/\(cname)/\(aname)/kustomization.yaml")
-				contents: yaml.Marshal(a)
+		for cname, apps in cfg.clusters for a in apps {
+			let M = file.Create & {
+				filename: strings.ToLower("c/\(cname)/\(a.aname)/kustomization.yaml")
+				contents: yaml.Marshal(a.output)
 			}
-			for rname, r in a._resources {
-				"resource-\(cname)-\(aname)-\(r.kind)-\(r.metadata.name)": file.Create & {
-					filename: strings.ToLower("c/\(cname)/\(aname)/resource-\(r.kind)-\(r.metadata.name).yaml")
+			"kustomization-\(cname)-\(a.aname)": M
+
+			for rname, r in a.resources {
+				let N = file.Create & {
+					filename: strings.ToLower("c/\(cname)/\(a.aname)/resource-\(r.kind)-\(r.metadata.name).yaml")
 					contents: yaml.Marshal(r)
 				}
+				"resource-\(cname)-\(a.aname)-\(r.kind)-\(r.metadata.name)": N
 			}
-			for pname, p in a._patches {
-				"patch-\(cname)-\(aname)-\(pname)": file.Create & {
-					filename: strings.ToLower("c/\(cname)/\(aname)/patch-\(pname).yaml")
+			for pname, p in a.patches {
+				let O = file.Create & {
+					filename: strings.ToLower("c/\(cname)/\(a.aname)/patch-\(pname).yaml")
 					contents: yaml.Marshal(p.ops)
 				}
+				"patch-\(cname)-\(a.aname)-\(pname)": O
 			}
 		}
 	}
