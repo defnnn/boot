@@ -5,6 +5,7 @@ import (
 	"text/template"
 	"tool/exec"
 	"tool/file"
+	"tool/cli"
 )
 
 #Plugin: {
@@ -298,6 +299,51 @@ _boot: CFG=#Boot & {
 					contents: variantKustomize.stdout
 				}
 			}
+		}
+	}
+}
+
+command: kustomize: {
+	for cname, c in deploy for aname, a in c {
+		"print-\(cname)-\(aname)": cli.Print & {
+			text: strings.ToLower("c/\(cname)/\(aname)/kustomization.yaml")
+		}
+		"kustomization-\(cname)-\(aname)": file.Create & {
+			filename: strings.ToLower("c/\(cname)/\(aname)/kustomization.yaml")
+			contents: yaml.Marshal(a)
+		}
+		for rname, r in a._resources {
+			"resource-\(cname)-\(aname)-\(r.kind)-\(r.metadata.name)": file.Create & {
+				filename: strings.ToLower("c/\(cname)/\(aname)/resource-\(r.kind)-\(r.metadata.name).yaml")
+				contents: yaml.Marshal(r)
+			}
+		}
+		for pname, p in a._patches {
+			"patch-\(cname)-\(aname)-\(pname)": file.Create & {
+				filename: strings.ToLower("c/\(cname)/\(aname)/patch-\(pname).yaml")
+				contents: yaml.Marshal(p.ops)
+			}
+		}
+	}
+}
+
+_projects: [ for pname, p in project {p}]
+
+_clusters: {
+	for cname, apps in application {
+		"\(cname)": [ for a in apps {a}]
+	}
+}
+
+command: argocd: {
+	"projects": file.Create & {
+		filename: "a/projects.yaml"
+		contents: yaml.MarshalStream(_projects)
+	}
+	for cname, apps in _clusters {
+		"cluster-\(cname)": file.Create & {
+			filename: "a/cluster-\(cname).yaml"
+			contents: yaml.MarshalStream(apps)
 		}
 	}
 }
