@@ -4,11 +4,12 @@ import (
 	"strings"
 )
 
-#ArgoProject: [CLUSTER=string]: {
+#ArgoProject: {
+	_cluster:   string
 	apiVersion: "argoproj.io/v1alpha1"
 	kind:       "AppProject"
 	metadata: {
-		name:      CLUSTER
+		name:      _cluster
 		namespace: "argocd"
 	}
 	spec: {
@@ -33,23 +34,25 @@ import (
 	}
 }
 
-#ArgoApplication: [CLUSTER=string]: [APP=string]: {
+#ArgoApplication: {
+	_cluster:   string
+	_app:       string
 	apiVersion: "argoproj.io/v1alpha1"
 	kind:       "Application"
 	metadata: {
-		name:      "\(CLUSTER)--\(APP)"
+		name:      "\(_cluster)--\(_app)"
 		namespace: "argocd"
 	}
 	spec: {
-		project: CLUSTER
+		project: _cluster
 		source: {
 			repoURL:        string | *'https://github.com/amanibhavam/deploy'
-			path:           string | *"c/\(CLUSTER)/\(APP)"
+			path:           string | *"c/\(_cluster)/\(_app)"
 			targetRevision: string | *"master"
 		}
 		destination: {
-			name:      CLUSTER
-			namespace: string | *APP
+			name:      _cluster
+			namespace: string | *_app
 		}
 		syncPolicy: {
 			automated: {
