@@ -1,5 +1,9 @@
 package boot
 
+import (
+	"tool/exec"
+)
+
 #Plugin: {
 	plugin: string
 	...
