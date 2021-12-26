@@ -10,12 +10,15 @@ import (
 
 #Plugin: {
 	plugin: string
+
 	commands: {...}
+
 	...
 }
 
 #Bundle: #Plugin & {
-	plugin:             "repo"
+	plugin: "repo"
+
 	upstream_manifest:  string | *""
 	upstream_kustomize: string | *""
 	chart_repo:         string | *""
@@ -117,184 +120,8 @@ import (
 }
 
 #Python: #Plugin & {
-	plugin:   "python"
-	language: "python"
+	plugin: "python"
 
-	commands: {
-		"python-flake8": file.Create & {
-			filename: ".flake8"
-			contents: template.Execute(_python.templates.flake8, {})
-		}
-		"python-pyproject": file.Create & {
-			filename: "pyproject.toml"
-			contents: template.Execute(_python.templates.pyproject, {})
-		}
-		"python-gitignore": file.Create & {
-			filename: ".gitignore"
-			contents: template.Execute(_python.templates.gitignore, {})
-		}
-		pythonRequirementsSite="python-requirements-site": file.Read & {
-			filename: "requirements.txt.site"
-			contents: string
-		}
-		pythonRequirements="python-requirements": file.Create & {
-			filename: "requirements.txt"
-			contents: template.Execute(_python.templates.requirements, {}) + "\n" + pythonRequirementsSite.contents
-		}
-		pythonVirtualEnv="python-virtualenv": exec.Run & {
-			cmd: ["python", "-mvenv", "venv"]
-		}
-		pythonPipUpgrade="python-pip-upgrade": exec.Run & {
-			cmd: ["venv/bin/pip", "install", "--upgrade", "pip"]
-			$after: pythonVirtualEnv
-		}
-		"python-pip-requirements": exec.Run & {
-			cmd: ["venv/bin/pip", "install", "-r", "requirements.txt"]
-			$after: [pythonPipUpgrade, pythonRequirements]
-		}
-	}
-}
-
-#Boot: #Plugin & {
-	plugin:  "boot"
-	module:  string
-	version: string
-	templates: {...}
-
-	commands: {
-		let tmpl = _boot & cfg
-
-		bootTouchGitIgnoreSite="boot-touch-gitignore-site": exec.Run & {
-			cmd: ["touch", ".gitignore-site"]
-		}
-		bootGitIgnoreSite="boot-gitignore-site": file.Read & {
-			filename: ".gitignore-site"
-			contents: string
-			$after:   bootTouchGitIgnoreSite
-		}
-		"boot-gitignore": file.Create & {
-			filename: ".gitignore"
-			contents: template.Execute(tmpl.templates.gitignore, {}) + "\n" + bootGitIgnoreSite.contents
-		}
-		bootMkdirCueMod="boot-mkdir-cue-mod": exec.Run & {
-			cmd: ["mkdir", "-p", "cue.mod"]
-		}
-		"boot-mod": file.Create & {
-			filename: "cue.mod/module.cue"
-			contents: template.Execute(tmpl.templates.cueMod, {})
-			$after:   bootMkdirCueMod
-		}
-		bootMods="boot-mods": file.Create & {
-			filename: "cue.mods"
-			contents: template.Execute(tmpl.templates.cueMods, {})
-		}
-		"boot-cue": file.Create & {
-			filename: "boot.cue"
-			contents: template.Execute(tmpl.templates.bootCue, {})
-		}
-		"boot-tool": file.Create & {
-			filename: "boot_tool.cue"
-			contents: template.Execute(tmpl.templates.bootTool, {})
-		}
-		"boot-vendor": exec.Run & {
-			cmd: ["hof", "mod", "vendor", "cue"]
-			$after: bootMods
-		}
-	}
-}
-
-#ArgoCD: #Plugin & {
-	plugin: "argocd"
-	projects: [...#ArgoProject]
-	clusters: {
-		[string]: [...#ArgoApplication]
-	}
-
-	commands: {
-		"argocd-project": file.Create & {
-			filename: "a/projects.yaml"
-			contents: yaml.MarshalStream(projects)
-		}
-		for cname, apps in clusters {
-			"argocd-cluster-\(cname)": file.Create & {
-				filename: "a/cluster-\(cname).yaml"
-				contents: yaml.Marshal(apps)
-			}
-		}
-	}
-}
-
-#Kustomize: #Plugin & {
-	plugin: "kustomize"
-	clusters: {
-		[string]: [...#DeployBase]
-	}
-
-	commands: {
-		for cname, apps in clusters for a in apps {
-			let M = file.Create & {
-				filename: strings.ToLower("c/\(cname)/\(a.aname)/kustomization.yaml")
-				contents: yaml.Marshal(a.output)
-			}
-			"kustomization-\(cname)-\(a.aname)": M
-
-			for rname, r in a.resources {
-				let N = file.Create & {
-					filename: strings.ToLower("c/\(cname)/\(a.aname)/resource-\(r.kind)-\(r.metadata.name).yaml")
-					contents: yaml.Marshal(r)
-				}
-				"resource-\(cname)-\(a.aname)-\(r.kind)-\(r.metadata.name)": N
-			}
-			for pname, p in a.patches {
-				let O = file.Create & {
-					filename: strings.ToLower("c/\(cname)/\(a.aname)/patch-\(pname).yaml")
-					contents: yaml.Marshal(p.ops)
-				}
-				"patch-\(cname)-\(a.aname)-\(pname)": O
-			}
-		}
-	}
-}
-
-#Plugins: {
-	cfg: {...}
-
-	vendor: exec.Run & {
-		cmd: "hof mod vendor cue"
-	}
-
-	hello: exec.Run & {
-		cmd: "echo hello v29"
-	}
-
-	{
-		for cname, c in cfg {
-			if (c & #Python) != _|_ {
-				py: #Command & {cfg: c}
-			}
-
-			if (c & #Bundle) != _|_ {
-				bundle: #Command & {cfg: c}
-			}
-
-			if (c & #Boot) != _|_ {
-				boot: #Command & {cfg: c}
-			}
-
-			if (c & #ArgoCD) != _|_ {
-				argocd: #Command & {cfg: c}
-			}
-
-			if (c & #Kustomize) != _|_ {
-				kustomize: #Command & {cfg: c}
-			}
-		}
-	}
-
-	...
-}
-
-_python: {
 	_line_length: 99
 	templates: {
 		flake8:    """
@@ -320,9 +147,45 @@ _python: {
 			flake8
 			"""
 	}
+
+	commands: {
+		"python-flake8": file.Create & {
+			filename: ".flake8"
+			contents: template.Execute(templates.flake8, {})
+		}
+		"python-pyproject": file.Create & {
+			filename: "pyproject.toml"
+			contents: template.Execute(templates.pyproject, {})
+		}
+		"python-gitignore": file.Create & {
+			filename: ".gitignore"
+			contents: template.Execute(templates.gitignore, {})
+		}
+		pythonRequirementsSite="python-requirements-site": file.Read & {
+			filename: "requirements.txt.site"
+			contents: string
+		}
+		pythonRequirements="python-requirements": file.Create & {
+			filename: "requirements.txt"
+			contents: template.Execute(templates.requirements, {}) + "\n" + pythonRequirementsSite.contents
+		}
+		pythonVirtualEnv="python-virtualenv": exec.Run & {
+			cmd: ["python", "-mvenv", "venv"]
+		}
+		pythonPipUpgrade="python-pip-upgrade": exec.Run & {
+			cmd: ["venv/bin/pip", "install", "--upgrade", "pip"]
+			$after: pythonVirtualEnv
+		}
+		"python-pip-requirements": exec.Run & {
+			cmd: ["venv/bin/pip", "install", "-r", "requirements.txt"]
+			$after: [pythonPipUpgrade, pythonRequirements]
+		}
+	}
 }
 
-_boot: CFG=#Boot & {
+#Boot: #Plugin & {
+	plugin: "boot"
+
 	templates: {
 		cueMod:  """
 			module: "\(module)"
@@ -361,5 +224,113 @@ _boot: CFG=#Boot & {
 		gitignore: """
 			cue.mod/pkg/
 			"""
+	}
+
+	commands: {
+		bootTouchGitIgnoreSite="boot-touch-gitignore-site": exec.Run & {
+			cmd: ["touch", ".gitignore-site"]
+		}
+		bootGitIgnoreSite="boot-gitignore-site": file.Read & {
+			filename: ".gitignore-site"
+			contents: string
+			$after:   bootTouchGitIgnoreSite
+		}
+		"boot-gitignore": file.Create & {
+			filename: ".gitignore"
+			contents: template.Execute(templates.gitignore, {}) + "\n" + bootGitIgnoreSite.contents
+		}
+		bootMkdirCueMod="boot-mkdir-cue-mod": exec.Run & {
+			cmd: ["mkdir", "-p", "cue.mod"]
+		}
+		"boot-mod": file.Create & {
+			filename: "cue.mod/module.cue"
+			contents: template.Execute(templates.cueMod, {})
+			$after:   bootMkdirCueMod
+		}
+		bootMods="boot-mods": file.Create & {
+			filename: "cue.mods"
+			contents: template.Execute(templates.cueMods, {})
+		}
+		"boot-cue": file.Create & {
+			filename: "boot.cue"
+			contents: template.Execute(templates.bootCue, {})
+		}
+		"boot-tool": file.Create & {
+			filename: "boot_tool.cue"
+			contents: template.Execute(templates.bootTool, {})
+		}
+		"boot-vendor": exec.Run & {
+			cmd: ["hof", "mod", "vendor", "cue"]
+			$after: bootMods
+		}
+	}
+}
+
+#ArgoCD: #Plugin & {
+	plugin: "argocd"
+
+	projects: [...#ArgoProject]
+	clusters: {
+		[string]: [...#ArgoApplication]
+	}
+
+	commands: {
+		"argocd-project": file.Create & {
+			filename: "a/projects.yaml"
+			contents: yaml.MarshalStream(projects)
+		}
+		for cname, apps in clusters {
+			"argocd-cluster-\(cname)": file.Create & {
+				filename: "a/cluster-\(cname).yaml"
+				contents: yaml.Marshal(apps)
+			}
+		}
+	}
+}
+
+#Kustomize: #Plugin & {
+	plugin: "kustomize"
+
+	clusters: {
+		[string]: [...#DeployBase]
+	}
+
+	commands: {
+		for cname, apps in clusters for a in apps {
+			let M = file.Create & {
+				filename: strings.ToLower("c/\(cname)/\(a.aname)/kustomization.yaml")
+				contents: yaml.Marshal(a.output)
+			}
+			"kustomization-\(cname)-\(a.aname)": M
+
+			for rname, r in a.resources {
+				let N = file.Create & {
+					filename: strings.ToLower("c/\(cname)/\(a.aname)/resource-\(r.kind)-\(r.metadata.name).yaml")
+					contents: yaml.Marshal(r)
+				}
+				"resource-\(cname)-\(a.aname)-\(r.kind)-\(r.metadata.name)": N
+			}
+			for pname, p in a.patches {
+				let O = file.Create & {
+					filename: strings.ToLower("c/\(cname)/\(a.aname)/patch-\(pname).yaml")
+					contents: yaml.Marshal(p.ops)
+				}
+				"patch-\(cname)-\(a.aname)-\(pname)": O
+			}
+		}
+	}
+}
+
+#Default: #Plugin & {
+	plugin: "default"
+
+	commands: {
+		vendor: exec.Run & {
+			cmd: "hof mod vendor cue"
+		}
+
+		hello: exec.Run & {
+			cmd: "echo hello v29"
+		}
 	}
 }
