@@ -2,8 +2,6 @@ package boot
 
 import (
 	"tool/exec"
-	"tool/file"
-	"encoding/yaml"
 )
 
 #Plugin: {
