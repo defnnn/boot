@@ -36,18 +36,9 @@ import (
 				cmd: ["curl", "-sSL", upstream_manifest]
 				stdout: string
 			}
-			upstreamWrite="upstream-write": file.Create & {
+			"upstream-write": file.Create & {
 				filename: "upstream/main.yaml"
 				contents: upstreamManifest.stdout
-			}
-			baseKustomize="base-kustomize": exec.Run & {
-				cmd: ["kustomize", "build", "base"]
-				stdout: string
-				$after: upstreamWrite
-			}
-			"base-write": file.Create & {
-				filename: "base.yaml"
-				contents: baseKustomize.stdout
 			}
 		}
 
@@ -56,18 +47,9 @@ import (
 				cmd: ["kustomize", "build", upstream_kustomize]
 				stdout: string
 			}
-			upstreamWrite="upstream-write": file.Create & {
+			"upstream-write": file.Create & {
 				filename: "upstream/main.yaml"
 				contents: upstreamKustomize.stdout
-			}
-			baseKustomize="base-kustomize": exec.Run & {
-				cmd: ["kustomize", "build", "base"]
-				stdout: string
-				$after: upstreamWrite
-			}
-			"base-write": file.Create & {
-				filename: "base.yaml"
-				contents: baseKustomize.stdout
 			}
 		}
 
