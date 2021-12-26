@@ -19,13 +19,16 @@ import (
 #Bundle: #Plugin & {
 	plugin: "repo"
 
-	upstream_manifest:  string | *""
-	upstream_kustomize: string | *""
-	chart_repo:         string | *""
+	upstream_manifest:  string
+	upstream_kustomize: string
+	chart_repo:         string
+	chart_name:         string
+	chart_version:      string
+	install:            string
 	variants:           {...} | *{base: values: {}}
 	variants: [string]: values: {...} | *{}
 	repo_name: string
-	namespace: string | *""
+	namespace: string
 
 	commands: {
 		if upstream_manifest != "" {
@@ -179,89 +182,6 @@ import (
 		"python-pip-requirements": exec.Run & {
 			cmd: ["venv/bin/pip", "install", "-r", "requirements.txt"]
 			$after: [pythonPipUpgrade, pythonRequirements]
-		}
-	}
-}
-
-#Boot: #Plugin & {
-	plugin: "boot"
-
-	templates: {
-		cueMod:  """
-			module: "\(module)"
-			"""
-		cueMods: """
-			module \(module)
-
-			cue v0.4.0
-
-			require (
-				github.com/defn/boot \(version)
-			)
-			"""
-		bootCue: """
-			package boot
-
-			import "github.com/defn/boot"
-
-			cfg: "boot": boot.#Boot
-
-			"""
-		bootTool: """
-			package boot
-
-			import (
-				"github.com/defn/boot"
-			)
-
-			cfg: {...} | *{}
-
-			command: boot.#Plugins & {
-				"cfg": cfg
-			}
-
-			"""
-		gitignore: """
-			cue.mod/pkg/
-			"""
-	}
-
-	commands: {
-		bootTouchGitIgnoreSite="boot-touch-gitignore-site": exec.Run & {
-			cmd: ["touch", ".gitignore-site"]
-		}
-		bootGitIgnoreSite="boot-gitignore-site": file.Read & {
-			filename: ".gitignore-site"
-			contents: string
-			$after:   bootTouchGitIgnoreSite
-		}
-		"boot-gitignore": file.Create & {
-			filename: ".gitignore"
-			contents: template.Execute(templates.gitignore, {}) + "\n" + bootGitIgnoreSite.contents
-		}
-		bootMkdirCueMod="boot-mkdir-cue-mod": exec.Run & {
-			cmd: ["mkdir", "-p", "cue.mod"]
-		}
-		"boot-mod": file.Create & {
-			filename: "cue.mod/module.cue"
-			contents: template.Execute(templates.cueMod, {})
-			$after:   bootMkdirCueMod
-		}
-		bootMods="boot-mods": file.Create & {
-			filename: "cue.mods"
-			contents: template.Execute(templates.cueMods, {})
-		}
-		"boot-cue": file.Create & {
-			filename: "boot.cue"
-			contents: template.Execute(templates.bootCue, {})
-		}
-		"boot-tool": file.Create & {
-			filename: "boot_tool.cue"
-			contents: template.Execute(templates.bootTool, {})
-		}
-		"boot-vendor": exec.Run & {
-			cmd: ["hof", "mod", "vendor", "cue"]
-			$after: bootMods
 		}
 	}
 }
