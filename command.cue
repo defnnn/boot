@@ -9,7 +9,7 @@ import (
 )
 
 #Command: {
-	cfg: #Repo | #Python | #Boot | #Kustomize | #ArgoCD
+	cfg: #Bundle | #Python | #Boot | #Kustomize | #ArgoCD
 
 	if cfg.plugin == "argocd" {
 		"argocd-project": file.Create & {
@@ -123,7 +123,7 @@ import (
 		}
 	}
 
-	if cfg.plugin == "repo" {
+	if cfg.plugin == "bundle" {
 		if cfg.upstream_manifest != "" {
 			upstreamManifest="upstream-manifest": exec.Run & {
 				cmd: ["curl", "-sSL", cfg.upstream_manifest]

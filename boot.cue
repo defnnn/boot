@@ -9,7 +9,7 @@ import (
 	...
 }
 
-#Repo: #Plugin & {
+#Bundle: #Plugin & {
 	plugin:             "repo"
 	upstream_manifest:  string | *""
 	upstream_kustomize: string | *""
@@ -64,8 +64,8 @@ import (
 				py: #Command & {cfg: c}
 			}
 
-			if (c & #Repo) != _|_ {
-				gen: #Command & {cfg: c}
+			if (c & #Bundle) != _|_ {
+				bundle: #Command & {cfg: c}
 			}
 
 			if (c & #Boot) != _|_ {
