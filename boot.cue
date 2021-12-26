@@ -31,7 +31,7 @@ import (
 	namespace: string
 
 	commands: {
-		if upstream_manifest != "" {
+		if upstream_manifest != _|_ {
 			upstreamManifest="upstream-manifest": exec.Run & {
 				cmd: ["curl", "-sSL", upstream_manifest]
 				stdout: string
@@ -51,7 +51,7 @@ import (
 			}
 		}
 
-		if upstream_kustomize != "" {
+		if upstream_kustomize != _|_ {
 			upstreamKustomize="upstream-kustomize": exec.Run & {
 				cmd: ["kustomize", "build", upstream_kustomize]
 				stdout: string
@@ -71,7 +71,7 @@ import (
 			}
 		}
 
-		if chart_repo != "" {
+		if chart_repo != _|_ {
 			upstreamHelmAdd="upstream-helm-add": exec.Run & {
 				cmd: ["helm", "repo", "add", repo_name, chart_repo]
 			}
@@ -86,9 +86,13 @@ import (
 					"upstream",
 				][0]
 
+				upstreamMkdir="upstream-mkdir-\(vname)": exec.Run & {
+					cmd: ["mkdir", "-p", upstream]
+				}
 				upstreamHelmValues="upstream-helm-values-\(vname)": file.Create & {
 					filename: "\(upstream)/values.yaml"
 					contents: yaml.Marshal(v.values)
+					$after:   upstreamMkdir
 				}
 				upstreamManifest="upstream-manifest-\(vname)": exec.Run & {
 					cmd: ["helm", "template", install, "\(repo_name)/\(chart_name)",
@@ -104,18 +108,9 @@ import (
 					$after: [upstreamHelmUpdate, upstreamHelmValues]
 				}
 
-				upstreamWrite="upstream-write-\(vname)": file.Create & {
+				"upstream-write-\(vname)": file.Create & {
 					filename: "\(upstream)/main.yaml"
 					contents: upstreamManifest.stdout
-				}
-				variantKustomize="variant-kustomize-\(vname)": exec.Run & {
-					cmd: ["kustomize", "build", vname]
-					stdout: string
-					$after: upstreamWrite
-				}
-				"variant-write-\(vname)": file.Create & {
-					filename: "\(vname).yaml"
-					contents: variantKustomize.stdout
 				}
 			}
 		}
