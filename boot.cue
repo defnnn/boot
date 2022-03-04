@@ -21,6 +21,12 @@ import (
 }
 
 commands: input=#BootInput & {
+	dev: {
+		dockerBuild: exec.Run & {
+			cmd: ["devcontainer", "open"]
+		}
+	}
+
 	hello: {
 		dockerBuild: exec.Run & {
 			cmd: ["echo", "hello", input.cmd, input.arg1, input.arg2]
