@@ -1,1 +1,1 @@
-module: "gitub.com/defn/boot"
+module: "github.com/defn/boot"
