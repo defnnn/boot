@@ -9,13 +9,10 @@ import (
 	image: string
 }
 
-#Docker: {
+#Docker: ctx={
 	boot.#BootInput
 	#DockerConfig
-	...
-}
 
-commands: ctx=#Docker & {
 	build: {
 		dockerBuild: exec.Run & {
 			cmd: ["docker", "build", "-t", ctx.image, "."]
