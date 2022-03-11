@@ -2,7 +2,7 @@ package docker
 
 import (
 	"tool/exec"
-	"github.com/defn/boot"
+	"github.com/defn/boot/input"
 )
 
 #DockerConfig: {
@@ -10,7 +10,7 @@ import (
 }
 
 #Docker: ctx={
-	boot.#BootInput
+	input.#Input
 	#DockerConfig
 
 	build: {

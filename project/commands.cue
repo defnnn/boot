@@ -5,7 +5,7 @@ import (
 	"tool/file"
 	"tool/exec"
 	"strings"
-	"github.com/defn/boot"
+	"github.com/defn/boot/input"
 )
 
 #ProjectConfig: {
@@ -13,7 +13,7 @@ import (
 }
 
 #Project: ctx={
-	boot.#BootInput
+	input.#Input
 	#ProjectConfig
 
 	config: {

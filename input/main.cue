@@ -1,6 +1,6 @@
-package boot
+package input
 
-#BootInput: {
+#Input: {
 	cmd:  string
 	args: string
 	arg1: string
