@@ -16,6 +16,12 @@ import (
 	input.#Input
 	#ProjectConfig
 
+	update: {
+		updateCueModulesWithHof: exec.Run & {
+			cmd: ["hof", "mod", "vendor", "cue"]
+		}
+	}
+
 	config: {
 		configureProjectGithubDir: exec.Run & {
 			cmd: ["mkdir", "-p", ".github"]
@@ -55,6 +61,15 @@ import (
 				    rev: v0.1.17
 				    hooks:
 				      - id: shellcheck
+
+				  - repo: local
+				    hooks:
+				      - id: cue-fmt
+				        name: cue-fmt
+				        entry: bash -c 'cue fmt --simplify'
+				        language: system
+				        files: '\\.cue$'
+				        pass_filenames: true
 
 				"""
 			filename: ".pre-commit-config.yaml"
