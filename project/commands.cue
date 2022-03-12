@@ -79,5 +79,21 @@ import (
 			$after: configureProjectPreCommitConfig
 			cmd: ["pre-commit", "install"]
 		}
+
+		configureProjectMakefile: file.Create & {
+			_data: {
+			}
+			_template: """
+				open:
+					devcontainer open
+
+				update:
+					git pull
+					hof mod vendor cue
+
+				"""
+			filename: "Makefile"
+			contents: template.Execute(_template, _data)
+		}
 	}
 }
