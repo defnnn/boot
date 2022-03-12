@@ -14,4 +14,4 @@ command: {
 	arg9: string @tag(arg9)
 }
 
-command: projectContext
+command: bootContext
