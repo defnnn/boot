@@ -1,4 +1,3 @@
-# k3d cluster create --config etc/immanent.yaml
 apiVersion: k3d.io/v1alpha4
 kind: Simple
 metadata:
@@ -7,7 +6,7 @@ servers: 1
 agents: 0
 kubeAPI:
   host: immanent.defn.ooo
-  hostIP: "0.0.0.0"
+  hostIP: 0.0.0.0
 image: rancher/k3s:v1.22.6-k3s1
 hostAliases:
   - ip: 100.101.28.35
@@ -26,28 +25,29 @@ volumes:
 options:
   k3d:
     wait: true
-    timeout: "360s"
+    timeout: 360s
     disableLoadbalancer: false
   k3s:
     extraArgs:
       - arg: --tls-san=100.101.28.35
         nodeFilters:
-          - "server:0"
+          - server:0
       - arg: --tls-san=immanent.defn.ooo
         nodeFilters:
-          - "server:0"
+          - server:0
       - arg: --disable=traefik
         nodeFilters:
-          - "server:0"
+          - server:0
   kubeconfig:
     updateDefaultKubeconfig: true
     switchCurrentContext: false
-registries:
-  use: ["k3d-registry.localhost:5555"]
 ports:
-  - port: 80:30080
+  - port: "80:30080"
     nodeFilters:
       - loadbalancer
-  - port: 443:30443
+  - port: "443:30443"
     nodeFilters:
       - loadbalancer
+registries:
+  use:
+    - k3d-registry.localhost:5555
