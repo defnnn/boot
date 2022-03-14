@@ -35,4 +35,11 @@ import (
 			cmd: ["k3d", "cluster", "delete", ctx.k3d_name]
 		}
 	}
+
+	context: {
+		createCluster: exec.Run & {
+			cmd: ["kubectl", "config", "use-context", "k3d-\(ctx.name)"]
+		}
+	}
+
 }
