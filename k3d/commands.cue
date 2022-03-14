@@ -38,8 +38,7 @@ import (
 
 	context: {
 		createCluster: exec.Run & {
-			cmd: ["kubectl", "config", "use-context", "k3d-\(ctx.name)"]
+			cmd: ["kubectl", "config", "use-context", "k3d-\(ctx.k3d_name)"]
 		}
 	}
-
 }
