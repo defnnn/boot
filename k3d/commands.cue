@@ -12,9 +12,8 @@ import (
 	#K3DConfig
 
 	config: {
-		saveConfig: file.Create & {
-			filename: "k3d.yaml"
-			contents: yaml.Marshal(ctx.output)
+		mergeKubeConfig: exec.Run & {
+			cmd: ["k3d", "kubeconfig", "merge", "-d", "-s", ctx.k3d_name]
 		}
 	}
 
@@ -25,7 +24,12 @@ import (
 	}
 
 	up: {
+		saveConfig: file.Create & {
+			filename: "k3d.yaml"
+			contents: yaml.Marshal(ctx.output)
+		}
 		createCluster: exec.Run & {
+			$after: saveConfig
 			cmd: ["k3d", "cluster", "create", "--config", "k3d.yaml"]
 		}
 	}
