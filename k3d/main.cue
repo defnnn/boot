@@ -7,6 +7,8 @@ package k3d
 	k3d_image : string | *"rancher/k3s:v1.22.6-k3s1"
 	k3d_ports: [...string] | *[]
 
+	app: {...} | *{aname: output: kind: kname: {}}
+
 	output: {
 		apiVersion: "k3d.io/v1alpha4"
 		kind:       "Simple"

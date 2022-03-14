@@ -4,6 +4,7 @@ import (
 	"encoding/yaml"
 	"tool/exec"
 	"tool/file"
+	"tool/cli"
 	"github.com/defn/boot/input"
 )
 
@@ -45,4 +46,20 @@ import (
 			cmd: ["kubectl", "config", "use-context", "k3d-\(ctx.k3d_name)"]
 		}
 	}
+
+	_manifest: [
+		for aname, a in ctx.app // app: defm: {}
+		for kname, kinds in a.output // app: defm: output: namespace: {}
+		for k in kinds  // app: defm: output: namespace: [name]: {}
+		{ k }
+	]
+
+	plan: cli.Print & {
+        text: yaml.MarshalStream(_manifest)
+    }
+
+	apply: exec.Run & {
+		stdin: yaml.MarshalStream(_manifest)
+        cmd: ["kubectl", "--context", "k3d-\(ctx.k3d_name)", "apply", "-f", "-"]
+    }
 }
