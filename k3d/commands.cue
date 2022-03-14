@@ -58,8 +58,17 @@ import (
         text: yaml.MarshalStream(_manifest)
     }
 
-	apply: exec.Run & {
+	up: exec.Run & {
 		stdin: yaml.MarshalStream(_manifest)
         cmd: ["kubectl", "--context", "k3d-\(ctx.k3d_name)", "apply", "-f", "-"]
     }
+
+	dev: exec.Run & {
+		appName: [for aname, a in ctx.app { aname }][0]
+		remoteFolder: string | *"/home/ubuntu"
+		if ctx.arg1 != "" {
+			remoteFolder: ctx.arg1
+		}
+		cmd: ["code", "--folder-uri", "vscode-remote://k8s-container+namespace=\(appName)+podname=\(appName)+name=defn+context=k3d-\(ctx.k3d_name)+image=\(ctx.k3d_name)+\(remoteFolder)"]
+	}
 }
