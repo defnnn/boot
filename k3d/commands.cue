@@ -64,11 +64,19 @@ import (
     }
 
 	dev: exec.Run & {
-		appName: [for aname, a in ctx.app { aname }][0]
+		appNames: [for aname, a in ctx.app { aname }]
+
 		remoteFolder: string | *"/home/ubuntu"
 		if len(ctx.arg) > 0 {
 			remoteFolder: ctx.arg[0]
 		}
-		cmd: ["code", "--folder-uri", "vscode-remote://k8s-container+namespace=\(appName)+podname=\(appName)+name=defn+context=k3d-\(ctx.k3d_name)+image=\(ctx.k3d_name)+\(remoteFolder)"]
+
+		if len(appNames) > 0 {
+			appName: appNames[0]
+			cmd: ["code", "--folder-uri", "vscode-remote://k8s-container+namespace=\(appName)+podname=\(appName)+name=defn+context=k3d-\(ctx.k3d_name)+image=\(ctx.k3d_name)+\(remoteFolder)"]
+		}
+		if len(appNames) == 0 {
+			cmd: ["echo", "not-implemented"]
+		}
 	}
 }
