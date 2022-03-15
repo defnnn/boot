@@ -67,7 +67,7 @@ import (
 		appName: [for aname, a in ctx.app { aname }][0]
 		remoteFolder: string | *"/home/ubuntu"
 		if len(ctx.arg) > 0 {
-			remoteFolder: ctx.arg1
+			remoteFolder: ctx.arg[0]
 		}
 		cmd: ["code", "--folder-uri", "vscode-remote://k8s-container+namespace=\(appName)+podname=\(appName)+name=defn+context=k3d-\(ctx.k3d_name)+image=\(ctx.k3d_name)+\(remoteFolder)"]
 	}
