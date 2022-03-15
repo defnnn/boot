@@ -1,5 +1,9 @@
 package k3d
 
+import (
+	App "github.com/defn/boot/app"
+)
+
 #K3DConfig: {
 	k3d_name: string
 	k3d_host: string
