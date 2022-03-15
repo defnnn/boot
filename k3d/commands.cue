@@ -24,7 +24,7 @@ import (
 		}
 	}
 
-	up: {
+	apply: {
 		saveConfig: file.Create & {
 			filename: "k3d.yaml"
 			contents: yaml.Marshal(ctx.output)
