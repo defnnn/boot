@@ -24,7 +24,7 @@ import (
 		}
 	}
 
-	apply: {
+	up: {
 		saveConfig: file.Create & {
 			filename: "k3d.yaml"
 			contents: yaml.Marshal(ctx.output)
@@ -58,7 +58,7 @@ import (
         text: yaml.MarshalStream(_manifest)
     }
 
-	up: exec.Run & {
+	apply: exec.Run & {
 		stdin: yaml.MarshalStream(_manifest)
         cmd: ["kubectl", "--context", "k3d-\(ctx.k3d_name)", "apply", "-f", "-"]
     }
