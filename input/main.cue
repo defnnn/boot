@@ -7,5 +7,8 @@ import (
 
 #Input: {
 	args: string
-	arg: [ for a in strings.Split(args, " ") {"\(base64.Decode(null, a))"}]
+	arg: [...string] | *[]
+	if len(args) > 0 {
+		arg: [ for a in strings.Split(args, " ") {"\(base64.Decode(null, a))"}]
+	}
 }
