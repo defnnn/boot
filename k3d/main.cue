@@ -37,6 +37,11 @@ package k3d
 				"server:0",
 			]
 		}, {
+			volume: "k3d-kube:/home/ubuntu/.kube"
+			nodeFilters: [
+				"server:0",
+			]
+		}, {
 			volume: "k3d-work:/mnt/work"
 			nodeFilters: [
 				"server:0",
