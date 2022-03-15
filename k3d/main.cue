@@ -11,7 +11,6 @@ import (
 	k3d_image : string | *"rancher/k3s:v1.22.6-k3s1"
 	k3d_ports: [...string] | *[]
 
-	app: {...} | *{aname: output: kind: kname: {}}
 	app: [aname=string]: App.#App & {
 		app_name: aname
 	}
