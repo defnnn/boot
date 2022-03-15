@@ -8,6 +8,7 @@ package k3d
 	k3d_ports: [...string] | *[]
 
 	app: {...} | *{aname: output: kind: kname: {}}
+	app: [aname=string]: app_name: aname
 
 	output: {
 		apiVersion: "k3d.io/v1alpha4"
