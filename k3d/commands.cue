@@ -63,6 +63,10 @@ import (
         cmd: ["kubectl", "--context", "k3d-\(ctx.k3d_name)", "apply", "-f", "-"]
     }
 
+	watch: exec.Run & {
+		cmd: ["tilt", "up", "--context", "k3d-\(ctx.k3d_name)"]
+	}
+
 	dev: exec.Run & {
 		appNames: [for aname, a in ctx.app { aname }]
 
