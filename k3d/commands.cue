@@ -35,6 +35,18 @@ import (
 		}
 	}
 
+	start: {
+		deleteCluster: exec.Run & {
+			cmd: ["k3d", "cluster", "start", ctx.k3d_name]
+		}
+	}
+
+	stop: {
+		deleteCluster: exec.Run & {
+			cmd: ["k3d", "cluster", "stop", ctx.k3d_name]
+		}
+	}
+
 	down: {
 		deleteCluster: exec.Run & {
 			cmd: ["k3d", "cluster", "delete", ctx.k3d_name]
