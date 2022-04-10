@@ -84,13 +84,10 @@ import (
 			_data: {
 			}
 			_template: """
+				-include Makefile.site
 				update:
 					git pull
 					hof mod vendor cue
-
-				open:
-					devcontainer open
-
 				"""
 			filename: "Makefile"
 			contents: template.Execute(_template, _data)
