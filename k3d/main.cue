@@ -11,8 +11,6 @@ import (
 	k3d_image: string | *"rancher/k3s:v1.22.8-k3s1"
 	k3d_ports: [...string] | *[]
 
-	home: string
-
 	app: [aname=string]: App.#App & {
 		app_name: aname
 	}
@@ -35,22 +33,22 @@ import (
 			]
 		}]
 		volumes: [{
-			volume: "k3d-work:/mnt/work"
-			nodeFilters: [
-				"server:0",
-			]
-		}, {
 			volume: "/var/run/docker.sock:/var/run/docker.sock"
 			nodeFilters: [
 				"server:0",
 			]
 		}, {
-			volume: "\(home)/.password-store:/mnt/password-store"
+			volume: "k3d-password-store:/mnt/password-store"
 			nodeFilters: [
 				"server:0",
 			]
 		}, {
-			volume: "\(home)/.kube:/mnt/kube"
+			volume: "k3d-kube:/mnt/kube"
+			nodeFilters: [
+				"server:0",
+			]
+		}, {
+			volume: "k3d-work:/mnt/work"
 			nodeFilters: [
 				"server:0",
 			]
