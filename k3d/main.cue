@@ -8,7 +8,7 @@ import (
 	k3d_name: string
 	k3d_host: string
 	k3d_ip: string
-	k3d_image : string | *"rancher/k3s:v1.22.6-k3s1"
+	k3d_image : string | *"rancher/k3s:v1.22.8-k3s1"
 	k3d_ports: [...string] | *[]
 
 	app: [aname=string]: App.#App & {
