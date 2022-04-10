@@ -60,27 +60,26 @@ import (
 	}
 
 	_manifest: [
-		for aname, a in ctx.app // app: defm: {}
-		for kname, kinds in a.output // app: defm: output: namespace: {}
-		for k in kinds  // app: defm: output: namespace: [name]: {}
-		{ k }
+		for aname, a in ctx.app
+		for kname, kinds in a.output
+		for k in kinds {k} // app: defm: output: namespace: [name]: {}
 	]
 
 	plan: cli.Print & {
-        text: yaml.MarshalStream(_manifest)
-    }
+		text: yaml.MarshalStream(_manifest)
+	}
 
 	apply: exec.Run & {
 		stdin: yaml.MarshalStream(_manifest)
-        cmd: ["kubectl", "--context", "k3d-\(ctx.k3d_name)", "apply", "-f", "-"]
-    }
+		cmd: ["kubectl", "--context", "k3d-\(ctx.k3d_name)", "apply", "-f", "-"]
+	}
 
 	watch: exec.Run & {
 		cmd: ["tilt", "up", "--context", "k3d-\(ctx.k3d_name)"]
 	}
 
 	dev: exec.Run & {
-		appNames: [for aname, a in ctx.app { aname }]
+		appNames: [ for aname, a in ctx.app {aname}]
 
 		remoteFolder: string | *"/home/ubuntu"
 		if len(ctx.arg) > 0 {
