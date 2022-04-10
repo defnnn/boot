@@ -1,5 +1,4 @@
-open:
-	devcontainer open
+-include Makefile.site
 
 update:
 	git pull
