@@ -74,16 +74,6 @@ import (
 				nodeFilters: [
 					"server:0",
 				]
-			}, {
-				arg: "--flannel-backend=none"
-				nodeFilters: [
-					"server:0",
-				]
-			}, {
-				arg: "--disable-network-policy"
-				nodeFilters: [
-					"server:0",
-				]
 			}]
 			kubeconfig: {
 				updateDefaultKubeconfig: true

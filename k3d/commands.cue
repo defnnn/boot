@@ -62,7 +62,7 @@ import (
 	_manifest: [
 		for aname, a in ctx.app
 		for kname, kinds in a.output
-		for k in kinds {k} // app: defm: output: namespace: [name]: {}
+		for k in kinds {k}, // app: defm: output: namespace: [name]: {}
 	]
 
 	plan: cli.Print & {
