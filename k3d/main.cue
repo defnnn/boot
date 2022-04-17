@@ -5,11 +5,11 @@ import (
 )
 
 #K3DConfig: {
-	k3d_name:  string
-	k3d_host:  string
-	k3d_ip:    string
-	k3d_image: string | *"rancher/k3s:v1.22.8-k3s1"
-	k3d_ports: [...string] | *[]
+	k3d_name:    string
+	k3d_host:    string
+	k3d_ip:      string
+	k3d_image:   string | *"rancher/k3s:v1.22.8-k3s1"
+	k3d_ports:   [...string] | *[]
 	k3d_network: string | *"bridge"
 
 	app: [aname=string]: App.#App & {
@@ -26,7 +26,7 @@ import (
 			host:   k3d_host
 			hostIP: "0.0.0.0"
 		}
-		image: k3d_image
+		image:   k3d_image
 		network: k3d_network
 		volumes: [{
 			volume: "/var/run/docker.sock:/var/run/docker.sock"
@@ -67,6 +67,11 @@ import (
 				]
 			}, {
 				arg: "--disable=traefik"
+				nodeFilters: [
+					"server:0",
+				]
+			}, {
+				arg: "--node-external-ip=\(k3d_ip)"
 				nodeFilters: [
 					"server:0",
 				]
