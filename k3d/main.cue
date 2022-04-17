@@ -27,12 +27,7 @@ import (
 			hostIP: "0.0.0.0"
 		}
 		image: k3d_image
-		hostAliases: [{
-			ip: k3d_ip
-			hostnames: [
-				"this",
-			]
-		}]
+		network: k3d_network
 		volumes: [{
 			volume: "/var/run/docker.sock:/var/run/docker.sock"
 			nodeFilters: [
@@ -72,11 +67,6 @@ import (
 				]
 			}, {
 				arg: "--disable=traefik"
-				nodeFilters: [
-					"server:0",
-				]
-			}, {
-				arg: "--network=\(k3d_network)"
 				nodeFilters: [
 					"server:0",
 				]
