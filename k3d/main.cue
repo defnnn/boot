@@ -76,7 +76,9 @@ import (
 				switchCurrentContext:    false
 			}
 		}
-		registries: use: ["k3d-registry.localhost:5555"]
+		if k3d_network != "host" {
+			registries: use: ["k3d-registry.localhost:5555"]
+		}
 
 		if len(k3d_ports) > 0 {
 			ports: [
