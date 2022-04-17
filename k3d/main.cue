@@ -10,6 +10,7 @@ import (
 	k3d_ip:    string
 	k3d_image: string | *"rancher/k3s:v1.22.8-k3s1"
 	k3d_ports: [...string] | *[]
+	k3d_network: string | *"bridge"
 
 	app: [aname=string]: App.#App & {
 		app_name: aname
@@ -71,6 +72,11 @@ import (
 				]
 			}, {
 				arg: "--disable=traefik"
+				nodeFilters: [
+					"server:0",
+				]
+			}, {
+				arg: "--network=\(k3d_network)"
 				nodeFilters: [
 					"server:0",
 				]
