@@ -8,18 +8,14 @@ import (
 	"github.com/defn/boot/input"
 )
 
-#ProjectConfig: {
-	codeowners: [...string]
-}
+#ProjectConfig: codeowners: [...string]
 
 #Project: ctx={
 	input.#Input
 	#ProjectConfig
 
-	update: {
-		updateCueModulesWithHof: exec.Run & {
-			cmd: ["hof", "mod", "vendor", "cue"]
-		}
+	update: updateCueModulesWithHof: exec.Run & {
+		cmd: ["hof", "mod", "vendor", "cue"]
 	}
 
 	config: {
@@ -29,9 +25,7 @@ import (
 
 		configureProjectCodeOwners: file.Create & {
 			$after: configureProjectGithubDir
-			_data: {
-				owners: strings.Join(ctx.codeowners, " ")
-			}
+			_data: owners: strings.Join(ctx.codeowners, " ")
 			_template: """
 				* {{ .owners }}
 
@@ -66,9 +60,18 @@ import (
 				    hooks:
 				      - id: cue-fmt
 				        name: cue-fmt
-				        entry: bash -c 'cue fmt --simplify'
+				        entry: cue fmt --simplify
 				        language: system
 				        files: '\\.cue$'
+				        pass_filenames: true
+
+				  - repo: local
+				    hooks:
+				      - id: sh-fmt
+				        name: sh-fmt
+				        entry: shfmt -w
+				        language: system
+				        files: "^(bin|etc)/"
 				        pass_filenames: true
 
 				"""
@@ -88,6 +91,7 @@ import (
 				update:
 					git pull
 					hof mod vendor cue
+
 				"""
 			filename: "Makefile"
 			contents: template.Execute(_template, _data)
