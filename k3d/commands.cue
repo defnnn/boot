@@ -27,7 +27,7 @@ import (
 		}
 		createCluster: exec.Run & {
 			$after: saveConfig
-			cmd: ["k3d", "cluster", "create", "--config", "k3d.yaml"]
+			cmd: ["k3d", "cluster", "create", "--no-rollback", "--config", "k3d.yaml"]
 		}
 	}
 
