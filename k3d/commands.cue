@@ -12,16 +12,12 @@ import (
 	input.#Input
 	#K3DConfig
 
-	config: {
-		mergeKubeConfig: exec.Run & {
-			cmd: ["k3d", "kubeconfig", "merge", "-d", "-s", ctx.k3d_name]
-		}
+	config: mergeKubeConfig: exec.Run & {
+		cmd: ["k3d", "kubeconfig", "merge", "-d", "-s", ctx.k3d_name]
 	}
 
-	"k3d-registry": {
-		createRegistry: exec.Run & {
-			cmd: ["k3d", "registry", "create", "registry.localhost", "--port", "5555"]
-		}
+	"k3d-registry": createRegistry: exec.Run & {
+		cmd: ["k3d", "registry", "create", "registry.localhost", "--port", "5555"]
 	}
 
 	up: {
@@ -35,28 +31,20 @@ import (
 		}
 	}
 
-	start: {
-		deleteCluster: exec.Run & {
-			cmd: ["k3d", "cluster", "start", ctx.k3d_name]
-		}
+	start: deleteCluster: exec.Run & {
+		cmd: ["k3d", "cluster", "start", ctx.k3d_name]
 	}
 
-	stop: {
-		deleteCluster: exec.Run & {
-			cmd: ["k3d", "cluster", "stop", ctx.k3d_name]
-		}
+	stop: deleteCluster: exec.Run & {
+		cmd: ["k3d", "cluster", "stop", ctx.k3d_name]
 	}
 
-	down: {
-		deleteCluster: exec.Run & {
-			cmd: ["k3d", "cluster", "delete", ctx.k3d_name]
-		}
+	down: deleteCluster: exec.Run & {
+		cmd: ["k3d", "cluster", "delete", ctx.k3d_name]
 	}
 
-	context: {
-		createCluster: exec.Run & {
-			cmd: ["kubectl", "config", "use-context", "k3d-\(ctx.k3d_name)"]
-		}
+	context: createCluster: exec.Run & {
+		cmd: ["kubectl", "config", "use-context", "k3d-\(ctx.k3d_name)"]
 	}
 
 	_manifest: [

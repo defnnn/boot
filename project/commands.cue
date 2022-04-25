@@ -60,7 +60,7 @@ import (
 				    hooks:
 				      - id: cue-fmt
 				        name: cue-fmt
-				        entry: cue fmt --simplify
+				        entry: bash -c 'for a in "$@"; do cue fmt --simplify "$a"; done' ''
 				        language: system
 				        files: '\\.cue$'
 				        pass_filenames: true
