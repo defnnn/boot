@@ -5,10 +5,10 @@
 package v1
 
 import (
-	metav1 "github.com/defn/boot/k8s.io/apimachinery/pkg/apis/meta/v1"
-	"github.com/defn/boot/k8s.io/apimachinery/pkg/api/resource"
-	"github.com/defn/boot/k8s.io/apimachinery/pkg/util/intstr"
-	"github.com/defn/boot/k8s.io/apimachinery/pkg/types"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/api/resource"
+	"k8s.io/apimachinery/pkg/util/intstr"
+	"k8s.io/apimachinery/pkg/types"
 )
 
 // NamespaceDefault means the object is in the default namespace which is applied when not specified by clients
@@ -575,7 +575,6 @@ import (
 }
 
 // PersistentVolumeClaimConditionType is a valid value of PersistentVolumeClaimCondition.Type
-// +enum
 #PersistentVolumeClaimConditionType: string // #enumPersistentVolumeClaimConditionType
 
 #enumPersistentVolumeClaimConditionType:
@@ -2980,7 +2979,6 @@ import (
 #PodUnknown: #PodPhase & "Unknown"
 
 // PodConditionType is a valid value for PodCondition.Type
-// +enum
 #PodConditionType: string // #enumPodConditionType
 
 #enumPodConditionType:
@@ -5492,7 +5490,6 @@ import (
 // NodeTerminated means the node has been removed from the cluster.
 #NodeTerminated: #NodePhase & "Terminated"
 
-// +enum
 #NodeConditionType: string // #enumNodeConditionType
 
 #enumNodeConditionType:
@@ -5542,7 +5539,6 @@ import (
 	message?: string @go(Message) @protobuf(6,bytes,opt)
 }
 
-// +enum
 #NodeAddressType: string // #enumNodeAddressType
 
 #enumNodeAddressType:
@@ -5733,7 +5729,6 @@ import (
 // forbidden due to the namespace being terminated.
 #NamespaceTerminatingCause: metav1.#CauseType & "NamespaceTerminating"
 
-// +enum
 #NamespaceConditionType: string // #enumNamespaceConditionType
 
 #enumNamespaceConditionType:
@@ -6215,8 +6210,8 @@ import (
 // List holds a list of objects, which may not be known by the server.
 #List: metav1.#List
 
-// LimitType is a type of object that is limited
-// +enum
+// LimitType is a type of object that is limited. It can be Pod, Container, PersistentVolumeClaim or
+// a fully qualified resource name.
 #LimitType: string // #enumLimitType
 
 #enumLimitType:
