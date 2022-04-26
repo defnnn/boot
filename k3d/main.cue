@@ -26,8 +26,10 @@ import (
 			host:   k3d_host
 			hostIP: "0.0.0.0"
 		}
-		image:   k3d_image
-		network: k3d_network
+		image: k3d_image
+		if k3d_network != "bridge" {
+			network: k3d_network
+		}
 		volumes: [{
 			volume: "/var/run/docker.sock:/var/run/docker.sock"
 			nodeFilters: [
