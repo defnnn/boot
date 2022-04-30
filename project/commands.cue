@@ -93,7 +93,7 @@ import (
 					hof mod vendor cue
 
 				"""
-			filename: "Makefile"
+			filename: "GNUmakefile"
 			contents: template.Execute(_template, _data)
 		}
 	}
