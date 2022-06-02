@@ -41,27 +41,20 @@ import (
 			_template: """
 				repos:
 				  - repo: https://github.com/pre-commit/pre-commit-hooks
-				    rev: v4.1.0
+				    rev: v4.2.0
 				    hooks:
 				      - id: trailing-whitespace
+				        exclude: ^(provider|cdktf.out)/|\\.lock
 				      - id: end-of-file-fixer
+				        exclude: ^(provider|cdktf.out)/|\\.lock
 				      - id: check-json
+				        exclude: ^(provider|cdktf.out)/
 				      - id: check-yaml
-
-				  - repo: https://github.com/gruntwork-io/pre-commit
-				    rev: v0.1.17
-				    hooks:
-				      - id: shellcheck
-
-				  - repo: https://github.com/golangci/golangci-lint
-				    rev: v1.45.2
-				    hooks:
-				      - id: golangci-lint
-
-				  - repo: https://github.com/pre-commit/mirrors-prettier
-				    rev: v2.5.1
-				    hooks:
-				      - id: prettier
+				        exclude: ^(provider|cdktf.out)/
+				      - id: check-toml
+				        exclude: ^(provider|cdktf.out)/
+				      - id: check-shebang-scripts-are-executable
+				      - id: check-executables-have-shebangs
 
 				  - repo: local
 				    hooks:
@@ -74,11 +67,10 @@ import (
 
 				  - repo: local
 				    hooks:
-				      - id: sh-fmt
-				        name: sh-fmt
-				        entry: shfmt -w
+				      - id: pants-fmt
+				        name: pants-fmt
+				        entry: p --owners-not-found-behavior=ignore fmt lint check
 				        language: system
-				        files: "^(bin|etc)/"
 				        pass_filenames: true
 
 				"""
