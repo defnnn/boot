@@ -98,6 +98,11 @@ import (
 					hof mod vendor cue
 					@echo; echo 'To update configs: c config'; echo
 
+				pc: # Install pre-commit via earthly
+					earthly +pre-commit --workdir=$(shell pwd)
+					tar xfz .cache/pre-commit.tgz
+					pre-commit run
+
 				"""
 			filename: "GNUmakefile"
 			contents: template.Execute(_template, _data)
