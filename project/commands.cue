@@ -56,23 +56,6 @@ import (
 				      - id: check-shebang-scripts-are-executable
 				      - id: check-executables-have-shebangs
 
-				  - repo: local
-				    hooks:
-				      - id: cue-fmt
-				        name: cue-fmt
-				        entry: bash -c 'for a in "$@"; do cue fmt --simplify "$a"; done' ''
-				        language: system
-				        files: '\\.cue$'
-				        pass_filenames: true
-
-				  - repo: local
-				    hooks:
-				      - id: pants-fmt
-				        name: pants-fmt
-				        entry: p --owners-not-found-behavior=ignore fmt lint check
-				        language: system
-				        pass_filenames: true
-
 				"""
 			filename: ".pre-commit-config.yaml"
 			contents: template.Execute(_template, _data)
