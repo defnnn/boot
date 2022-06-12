@@ -54,7 +54,6 @@ import (
 				      - id: check-toml
 				        exclude: ^(provider|cdktf.out)/
 				      - id: check-shebang-scripts-are-executable
-				      - id: check-executables-have-shebangs
 
 				"""
 			filename: ".pre-commit-config.yaml"
