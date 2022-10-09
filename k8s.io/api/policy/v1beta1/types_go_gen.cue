@@ -5,9 +5,9 @@
 package v1beta1
 
 import (
-	"k8s.io/apimachinery/pkg/util/intstr"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/api/core/v1"
+	"github.com/defn/boot/k8s.io/apimachinery/pkg/util/intstr"
+	metav1 "github.com/defn/boot/k8s.io/apimachinery/pkg/apis/meta/v1"
+	"github.com/defn/boot/k8s.io/api/core/v1"
 )
 
 // PodDisruptionBudgetSpec is a description of a PodDisruptionBudget.

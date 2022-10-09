@@ -5,9 +5,9 @@
 package v1
 
 import (
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	corev1 "k8s.io/api/core/v1"
-	"k8s.io/apimachinery/pkg/types"
+	metav1 "github.com/defn/boot/k8s.io/apimachinery/pkg/apis/meta/v1"
+	corev1 "github.com/defn/boot/k8s.io/api/core/v1"
+	"github.com/defn/boot/k8s.io/apimachinery/pkg/types"
 )
 
 #JobCompletionIndexAnnotation: "batch.kubernetes.io/job-completion-index"

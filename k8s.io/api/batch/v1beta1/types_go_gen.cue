@@ -5,9 +5,9 @@
 package v1beta1
 
 import (
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	batchv1 "k8s.io/api/batch/v1"
-	"k8s.io/api/core/v1"
+	metav1 "github.com/defn/boot/k8s.io/apimachinery/pkg/apis/meta/v1"
+	batchv1 "github.com/defn/boot/k8s.io/api/batch/v1"
+	"github.com/defn/boot/k8s.io/api/core/v1"
 )
 
 // JobTemplate describes a template for creating copies of a predefined pod.

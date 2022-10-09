@@ -5,9 +5,9 @@
 package v2beta2
 
 import (
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/api/core/v1"
-	"k8s.io/apimachinery/pkg/api/resource"
+	metav1 "github.com/defn/boot/k8s.io/apimachinery/pkg/apis/meta/v1"
+	"github.com/defn/boot/k8s.io/api/core/v1"
+	"github.com/defn/boot/k8s.io/apimachinery/pkg/api/resource"
 )
 
 // HorizontalPodAutoscaler is the configuration for a horizontal pod
