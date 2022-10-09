@@ -1,13 +1,20 @@
 SHELL := /bin/bash
 
+gen:
+	$(MAKE) get
+	$(MAKE) rewrite
+
 rewrite: # Rewrite k8s.io module name to this repo
 	git grep '"k8s.io/' k8s.io | cut -d: -f1 | uniq | while read -r f; do perl -pe 's{"k8s.io/}{"github.com/defn/boot/k8s.io/}' -i $$f; done
 
 get: # Generate cue schemas for k8s libraries
-	go get k8s.io/api/core/v1
-	go get k8s.io/api/apps/v1
-	cue get go k8s.io/api/core/v1
-	cue get go k8s.io/api/apps/v1
+	for a in \
+		k8s.io/api/core/v1 \
+		k8s.io/api/apps/v1 \
+	; do \
+		go get $$a; \
+		cue get go $$a; \
+	done
 	rsync -ia cue.mod/gen/k8s.io .
 	rm -rf cue.mod/gen/k8s.io
 
