@@ -5,8 +5,8 @@
 package v1
 
 import (
-	"github.com/defn/boot/k8s.io/apimachinery/pkg/runtime"
-	"github.com/defn/boot/k8s.io/apimachinery/pkg/watch"
+	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/watch"
 )
 
 // Event represents a single event to a watched resource.

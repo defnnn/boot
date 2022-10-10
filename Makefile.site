@@ -16,18 +16,6 @@ get: # Generate cue schemas for k8s libraries
 	rsync -ia cue.mod/gen/k8s.io .
 	rm -rf cue.mod/gen/k8s.io
 
-list: # List api resources
-	@pod api-versions | egrep '\.k8s\.io|^[^\.]+$$' | sed 's#\.# #' | sort -k 2 \
-		| while read -r a b; do \
-			if test -z "$${b}"; then \
-				if [[ "$$a" == "v1" ]]; then \
-					echo k8s.io/api/core/$$a $$b; \
-				else \
-					echo k8s.io/api/$$a $$b; \
-				fi; \
-			fi; \
-		done | sed 's# #.#' > k8s.txt
-
 check: # Check config generation
 	c config
 	git add -u .
