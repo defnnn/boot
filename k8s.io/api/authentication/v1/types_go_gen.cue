@@ -5,8 +5,8 @@
 package v1
 
 import (
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/types"
+	metav1 "github.com/defn/boot/k8s.io/apimachinery/pkg/apis/meta/v1"
+	"github.com/defn/boot/k8s.io/apimachinery/pkg/types"
 )
 
 // ImpersonateUserHeader is used to impersonate a particular user during an API server request

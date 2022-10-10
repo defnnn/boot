@@ -4,7 +4,7 @@
 
 package v1
 
-import metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+import metav1 "github.com/defn/boot/k8s.io/apimachinery/pkg/apis/meta/v1"
 
 #APIGroupAll:        "*"
 #ResourceAll:        "*"

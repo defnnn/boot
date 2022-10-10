@@ -5,8 +5,8 @@
 package v1
 
 import (
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	apiv1 "k8s.io/api/core/v1"
+	metav1 "github.com/defn/boot/k8s.io/apimachinery/pkg/apis/meta/v1"
+	apiv1 "github.com/defn/boot/k8s.io/api/core/v1"
 )
 
 // PriorityClass defines mapping from a priority class name to the priority

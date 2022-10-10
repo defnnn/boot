@@ -5,10 +5,10 @@
 package v1
 
 import (
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/types"
-	authenticationv1 "k8s.io/api/authentication/v1"
-	"k8s.io/apimachinery/pkg/runtime"
+	metav1 "github.com/defn/boot/k8s.io/apimachinery/pkg/apis/meta/v1"
+	"github.com/defn/boot/k8s.io/apimachinery/pkg/types"
+	authenticationv1 "github.com/defn/boot/k8s.io/api/authentication/v1"
+	"github.com/defn/boot/k8s.io/apimachinery/pkg/runtime"
 )
 
 // AdmissionReview describes an admission review request/response.

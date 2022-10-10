@@ -5,8 +5,8 @@
 package v1
 
 import (
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/api/core/v1"
+	metav1 "github.com/defn/boot/k8s.io/apimachinery/pkg/apis/meta/v1"
+	"github.com/defn/boot/k8s.io/api/core/v1"
 )
 
 // CertificateSigningRequest objects provide a mechanism to obtain x509 certificates
