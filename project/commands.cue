@@ -14,10 +14,6 @@ import (
 	input.#Input
 	#ProjectConfig
 
-	update: updateCueModulesWithHof: exec.Run & {
-		cmd: ["hof", "mod", "vendor", "cue"]
-	}
-
 	config: {
 		configureProjectGithubDir: exec.Run & {
 			cmd: ["mkdir", "-p", ".github"]
@@ -75,11 +71,6 @@ import (
 					@perl -ne 'printf("%20s: %s\\n","$$1","$$2") if m{^([\\w+-]+):[^#]+#\\s(.+)$$}' $(shell ls -d GNUmakefile Makefile.* 2>/dev/null)
 
 				-include Makefile.site
-
-				update: # Update git repo and cue libraries
-					git pull
-					hof mod vendor cue
-					@echo; echo 'To update configs: c config'; echo
 
 				"""
 			filename: "GNUmakefile"
