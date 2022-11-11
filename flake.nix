@@ -1,6 +1,6 @@
 {
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/22.05";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     flake-utils.url = "github:numtide/flake-utils";
     home.url = "github:defn/dev?dir=dev&ref=v0.0.8";
   };
@@ -21,6 +21,8 @@
           buildInputs = with pkgs; [
             home.defaultPackage.${system}
             defaultPackage
+            go
+            rsync
           ];
         };
 
